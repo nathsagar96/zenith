@@ -21,6 +21,4 @@ public class CreateCategoryRequest {
       regexp = "^[\\w\\s-]+$",
       message = "Category name can only contain letters, numbers, spaces and hyphens")
   private String name;
-
-
 }

@@ -1,12 +1,11 @@
 package dev.sagar.zenith.domain.entities;
 
 import jakarta.persistence.*;
-import lombok.*;
-
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import lombok.*;
 
 @Entity
 @Getter
