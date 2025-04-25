@@ -15,7 +15,7 @@ public class AuthController {
 
   private final AuthenticationService authenticationService;
 
-  @PostMapping
+  @PostMapping("/login")
   @ResponseStatus(HttpStatus.OK)
   public AuthResponse login(@RequestBody LoginRequest loginRequest) {
     UserDetails userDetails =
