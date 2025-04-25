@@ -47,6 +47,21 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         .compact();
   }
 
+  @Override
+  public UserDetails validateToken(String token) {
+    String username = extractUsername(token);
+    return userDetailsService.loadUserByUsername(username);
+  }
+
+  private String extractUsername(String token) {
+    return Jwts.parser()
+        .setSigningKey(getSigningKey())
+        .build()
+        .parseClaimsJws(token)
+        .getBody()
+        .getSubject();
+  }
+
   private Key getSigningKey() {
     byte[] keyBytes = secretKey.getBytes();
     return Keys.hmacShaKeyFor(keyBytes);

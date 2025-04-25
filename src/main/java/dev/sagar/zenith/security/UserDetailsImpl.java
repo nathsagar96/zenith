@@ -3,6 +3,7 @@ package dev.sagar.zenith.security;
 import dev.sagar.zenith.domain.entities.User;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -28,5 +29,9 @@ public class UserDetailsImpl implements UserDetails {
   @Override
   public String getUsername() {
     return user.getEmail();
+  }
+
+  public UUID getId() {
+    return user.getId();
   }
 }
