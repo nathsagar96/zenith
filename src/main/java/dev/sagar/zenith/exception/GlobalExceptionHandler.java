@@ -1,6 +1,7 @@
 package dev.sagar.zenith.exception;
 
 import dev.sagar.zenith.domain.dtos.ApiErrorResponse;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -39,6 +40,16 @@ public class GlobalExceptionHandler {
     return ApiErrorResponse.builder()
         .status(HttpStatus.UNAUTHORIZED.value())
         .message("Invalid credentials")
+        .build();
+  }
+
+  @ExceptionHandler(EntityNotFoundException.class)
+  @ResponseStatus(HttpStatus.NOT_FOUND)
+  public ApiErrorResponse handleEntityNotFoundException(EntityNotFoundException e) {
+    log.error("Entity not found: {}", e.getMessage(), e);
+    return ApiErrorResponse.builder()
+        .status(HttpStatus.NOT_FOUND.value())
+        .message(e.getMessage())
         .build();
   }
 

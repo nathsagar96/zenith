@@ -3,12 +3,12 @@ package dev.sagar.zenith.services.impl;
 import dev.sagar.zenith.domain.entities.Tag;
 import dev.sagar.zenith.repositories.TagRepository;
 import dev.sagar.zenith.services.TagService;
-import jakarta.transaction.Transactional;
-
+import jakarta.persistence.EntityNotFoundException;
 import java.util.*;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -56,5 +56,21 @@ public class TagServiceImpl implements TagService {
               }
               tagRepository.deleteById(id);
             });
+  }
+
+  @Override
+  public Tag getTagById(UUID id) {
+    return tagRepository
+        .findById(id)
+        .orElseThrow(() -> new EntityNotFoundException("Tag not found with id: " + id));
+  }
+
+  @Override
+  public List<Tag> getTagsByIds(Set<UUID> ids) {
+    List<Tag> tags = tagRepository.findAllById(ids);
+    if (tags.size() != ids.size()) {
+      throw new EntityNotFoundException("Some tags not found with the provided ids");
+    }
+    return tags;
   }
 }

@@ -1,12 +1,11 @@
 package dev.sagar.zenith.controllers;
 
-import dev.sagar.zenith.domain.dtos.CreateTagsRequest;
-import dev.sagar.zenith.domain.dtos.TagResponse;
+import dev.sagar.zenith.domain.dtos.CreateTagRequest;
+import dev.sagar.zenith.domain.dtos.TagDto;
 import dev.sagar.zenith.mappers.TagMapper;
 import dev.sagar.zenith.services.TagService;
 import java.util.List;
 import java.util.UUID;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -21,15 +20,15 @@ public class TagController {
 
   @GetMapping
   @ResponseStatus(HttpStatus.OK)
-  public List<TagResponse> getAllTags() {
-    return tagService.getTags().stream().map(tagMapper::toTagResponse).toList();
+  public List<TagDto> getAllTags() {
+    return tagService.getTags().stream().map(tagMapper::toTagDto).toList();
   }
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
-  public List<TagResponse> createTags(@RequestBody CreateTagsRequest createTagsRequest) {
-    return tagService.createTags(createTagsRequest.getNames()).stream()
-        .map(tagMapper::toTagResponse)
+  public List<TagDto> createTags(@RequestBody CreateTagRequest createTagRequest) {
+    return tagService.createTags(createTagRequest.getNames()).stream()
+        .map(tagMapper::toTagDto)
         .toList();
   }
 

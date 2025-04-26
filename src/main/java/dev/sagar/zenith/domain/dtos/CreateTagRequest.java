@@ -1,10 +1,9 @@
 package dev.sagar.zenith.domain.dtos;
 
-import java.util.Set;
-
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateTagsRequest {
+public class CreateTagRequest {
 
   @NotEmpty(message = "Tag names cannot be empty")
   @Size(max = 10, message = "Maximum {max} tags are allowed")
