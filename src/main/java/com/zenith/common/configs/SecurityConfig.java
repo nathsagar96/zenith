@@ -3,7 +3,6 @@ package com.zenith.common.configs;
 import com.zenith.auth.AuthenticationService;
 import com.zenith.auth.JwtAuthenticationFilter;
 import com.zenith.auth.UserRepository;
-import com.zenith.auth.domain.entities.User;
 import com.zenith.auth.impl.UserDetailsServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,16 +30,6 @@ public class SecurityConfig {
   @Bean
   public UserDetailsService userDetailsService(UserRepository userRepository) {
 
-    String email = "user@test.com";
-
-    userRepository
-        .findByEmail(email)
-        .orElseGet(
-            () -> {
-              User newUser = new User("Test User", email, passwordEncoder().encode("password"));
-              return userRepository.save(newUser);
-            });
-
     return new UserDetailsServiceImpl(userRepository);
   }
 
@@ -50,6 +39,8 @@ public class SecurityConfig {
     http.authorizeHttpRequests(
             auth ->
                 auth.requestMatchers(HttpMethod.POST, "/api/v1/auth/**")
+                    .permitAll()
+                    .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html")
                     .permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/v1/posts/drafts")
                     .authenticated()

@@ -1,6 +1,10 @@
 package com.zenith.auth;
 
 import com.zenith.auth.impl.UserDetailsImpl;
+import com.zenith.common.exceptions.InvalidTokenException;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -38,9 +42,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             request.setAttribute("userId", userDetailsImpl.getId());
           }
         }
+      } catch (SignatureException | MalformedJwtException | ExpiredJwtException e) {
+        throw new InvalidTokenException("Invalid or expired JWT token", e);
       } catch (Exception e) {
-        // Handle token validation failure
-        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token");
+        throw new InvalidTokenException("An unexpected error occurred during token validation", e);
       }
     }
 

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional(readOnly = true)
 public class CategoryServiceImpl implements CategoryService {
 
   private final CategoryRepository categoryRepository;
@@ -36,6 +37,7 @@ public class CategoryServiceImpl implements CategoryService {
   }
 
   @Override
+  @Transactional
   public void deleteCategory(UUID id) {
     Optional<Category> category = categoryRepository.findById(id);
 
