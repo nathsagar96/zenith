@@ -2,6 +2,7 @@ package com.zenith.auth;
 
 import com.zenith.auth.domain.dtos.AuthResponse;
 import com.zenith.auth.domain.dtos.LoginRequest;
+import com.zenith.auth.domain.dtos.RegisterRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -35,5 +36,20 @@ public class AuthController {
         authenticationService.authenticate(loginRequest.email(), loginRequest.password());
     String token = authenticationService.generateToken(userDetails);
     return ResponseEntity.ok(new AuthResponse(token, 86400));
+  }
+
+  @Operation(summary = "Register a new user and return JWT token")
+  @ApiResponses(
+      value = {
+        @ApiResponse(responseCode = "201", description = "User registered successfully"),
+        @ApiResponse(responseCode = "400", description = "Invalid input"),
+        @ApiResponse(responseCode = "409", description = "User already exists")
+      })
+  @PostMapping("/register")
+  public ResponseEntity<AuthResponse> register(
+      @Valid @RequestBody RegisterRequest registerRequest) {
+    UserDetails userDetails = authenticationService.register(registerRequest);
+    String token = authenticationService.generateToken(userDetails);
+    return ResponseEntity.status(HttpStatus.CREATED).body(new AuthResponse(token, 86400));
   }
 }

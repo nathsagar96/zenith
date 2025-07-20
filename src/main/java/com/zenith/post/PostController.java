@@ -32,7 +32,9 @@ public class PostController {
   @Operation(summary = "Get all posts, optionally filtered by category or tag")
   @ApiResponses(
       value = {
-        @ApiResponse(responseCode = "200", description = "Successfully retrieved list of posts")
+        @ApiResponse(
+            responseCode = "200",
+            description = "Successfully retrieved list of published posts")
       })
   @GetMapping
   public ResponseEntity<List<PostDto>> getAllPosts(
@@ -48,8 +50,8 @@ public class PostController {
         @ApiResponse(responseCode = "401", description = "Unauthorized")
       })
   @GetMapping("/drafts")
-  public ResponseEntity<List<PostDto>> getDraftPosts(@RequestAttribute UUID id) {
-    User user = userService.getUserById(id);
+  public ResponseEntity<List<PostDto>> getDraftPosts(@RequestAttribute UUID userId) {
+    User user = userService.getUserById(userId);
     return ResponseEntity.ok(
         postService.getDraftPosts(user).stream().map(postMapper::toDto).toList());
   }
@@ -59,12 +61,14 @@ public class PostController {
       value = {
         @ApiResponse(responseCode = "201", description = "Post created successfully"),
         @ApiResponse(responseCode = "400", description = "Invalid input"),
-        @ApiResponse(responseCode = "401", description = "Unauthorized")
+        @ApiResponse(responseCode = "401", description = "Unauthorized"),
+        @ApiResponse(responseCode = "404", description = "Category or Tag not found")
       })
   @PostMapping
   public ResponseEntity<PostDto> createPost(
-      @Valid @RequestBody CreatePostRequestDto createPostRequestDto, @RequestAttribute UUID id) {
-    User user = userService.getUserById(id);
+      @Valid @RequestBody CreatePostRequestDto createPostRequestDto,
+      @RequestAttribute UUID userId) {
+    User user = userService.getUserById(userId);
     CreatePostRequest createPostRequest = postMapper.toCreatePostRequest(createPostRequestDto);
     return ResponseEntity.status(HttpStatus.CREATED)
         .body(postMapper.toDto(postService.createPost(createPostRequest, user)));
@@ -75,7 +79,7 @@ public class PostController {
       value = {
         @ApiResponse(responseCode = "200", description = "Post updated successfully"),
         @ApiResponse(responseCode = "400", description = "Invalid input"),
-        @ApiResponse(responseCode = "404", description = "Post not found")
+        @ApiResponse(responseCode = "404", description = "Post or Category or Tag not found")
       })
   @PutMapping("/{id}")
   public ResponseEntity<PostDto> updatePost(

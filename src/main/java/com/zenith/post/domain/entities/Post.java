@@ -49,6 +49,8 @@ public class Post {
   @Column(nullable = false)
   private LocalDateTime updatedAt;
 
+  public Post() {}
+
   public Post(
       String title,
       String content,
