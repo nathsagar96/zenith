@@ -1,7 +1,6 @@
 package com.zenith.mappers;
 
 import com.zenith.dtos.requests.CreateUserRequest;
-import com.zenith.dtos.requests.UpdateUserRequest;
 import com.zenith.dtos.responses.UserResponse;
 import com.zenith.entities.Comment;
 import com.zenith.entities.Post;
@@ -9,7 +8,6 @@ import com.zenith.entities.User;
 import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 
 @Mapper(componentModel = "spring")
@@ -18,10 +16,6 @@ public interface UserMapper {
     @Mapping(target = "posts", ignore = true)
     @Mapping(target = "comments", ignore = true)
     User toEntity(CreateUserRequest request);
-
-    @Mapping(target = "posts", ignore = true)
-    @Mapping(target = "comments", ignore = true)
-    User toEntity(UpdateUserRequest request, @MappingTarget User user);
 
     @Mapping(source = "posts", target = "postCount", qualifiedByName = "postCount")
     @Mapping(source = "comments", target = "commentCount", qualifiedByName = "commentCount")

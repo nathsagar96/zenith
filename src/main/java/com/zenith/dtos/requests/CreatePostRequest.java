@@ -10,6 +10,5 @@ public record CreatePostRequest(
                 String title,
         @NotBlank(message = "Content is required") String content,
         @NotNull(message = "Author ID is required") Long authorId,
-        String status,
         @Size(min = 1, message = "At least {min} category ID is required") Set<Long> categoryIds,
         @Size(min = 1, message = "At least {min} tag ID is required") Set<Long> tagIds) {}

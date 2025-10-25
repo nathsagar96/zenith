@@ -1,7 +1,6 @@
 package com.zenith.mappers;
 
 import com.zenith.dtos.requests.CreatePostRequest;
-import com.zenith.dtos.requests.UpdatePostRequest;
 import com.zenith.dtos.responses.PostResponse;
 import com.zenith.entities.Category;
 import com.zenith.entities.Comment;
@@ -11,7 +10,6 @@ import java.util.List;
 import java.util.Set;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 
 @Mapper(componentModel = "spring")
@@ -19,17 +17,11 @@ public interface PostMapper {
 
     @Mapping(target = "slug", ignore = true)
     @Mapping(target = "author", ignore = true)
+    @Mapping(target = "status", ignore = true)
     @Mapping(target = "categories", ignore = true)
     @Mapping(target = "tags", ignore = true)
     @Mapping(target = "comments", ignore = true)
     Post toEntity(CreatePostRequest request);
-
-    @Mapping(target = "slug", ignore = true)
-    @Mapping(target = "author", ignore = true)
-    @Mapping(target = "categories", ignore = true)
-    @Mapping(target = "tags", ignore = true)
-    @Mapping(target = "comments", ignore = true)
-    Post toEntity(UpdatePostRequest request, @MappingTarget Post post);
 
     @Mapping(source = "author.id", target = "authorId")
     @Mapping(source = "categories", target = "categoryCount", qualifiedByName = "categoryCount")
