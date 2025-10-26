@@ -6,7 +6,9 @@ import com.zenith.dtos.responses.TagResponse;
 import com.zenith.services.TagService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +20,15 @@ public class TagController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public PageResponse<TagResponse> getAllTags(Pageable pageable) {
+    public PageResponse<TagResponse> getAllTags(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "desc") String direction) {
+        Sort sort = direction.equalsIgnoreCase("asc")
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(page, size, sort);
         return tagService.getAllTags(pageable);
     }
 

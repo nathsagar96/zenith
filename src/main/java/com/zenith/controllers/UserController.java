@@ -7,7 +7,9 @@ import com.zenith.dtos.responses.UserResponse;
 import com.zenith.services.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,13 +21,31 @@ public class UserController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public PageResponse<UserResponse> getAllUsers(Pageable pageable) {
+    public PageResponse<UserResponse> getAllUsers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "desc") String direction) {
+        Sort sort = direction.equalsIgnoreCase("asc")
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(page, size, sort);
         return userService.getAllUser(pageable);
     }
 
     @GetMapping("/role/{role}")
     @ResponseStatus(HttpStatus.OK)
-    public PageResponse<UserResponse> getAllUsersByRole(@PathVariable("role") String role, Pageable pageable) {
+    public PageResponse<UserResponse> getAllUsersByRole(
+            @PathVariable("role") String role,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "desc") String direction) {
+        Sort sort = direction.equalsIgnoreCase("asc")
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+
         return userService.getAllUserByRole(role, pageable);
     }
 

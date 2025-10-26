@@ -7,7 +7,9 @@ import com.zenith.dtos.responses.PostResponse;
 import com.zenith.services.PostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,20 +21,45 @@ public class PostController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public PageResponse<PostResponse> getAllPosts(Pageable pageable) {
+    public PageResponse<PostResponse> getAllPosts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "desc") String direction) {
+        Sort sort = direction.equalsIgnoreCase("asc")
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(page, size, sort);
         return postService.getAllPosts(pageable);
     }
 
     @GetMapping("/published")
     @ResponseStatus(HttpStatus.OK)
-    public PageResponse<PostResponse> getAllPublishedPosts(Pageable pageable) {
+    public PageResponse<PostResponse> getAllPublishedPosts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "desc") String direction) {
+        Sort sort = direction.equalsIgnoreCase("asc")
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(page, size, sort);
         return postService.getAllPublishedPosts(pageable);
     }
 
     @GetMapping("/author/{authorId}/status/{status}")
     @ResponseStatus(HttpStatus.OK)
     public PageResponse<PostResponse> getAllPostsByAuthorAndStatus(
-            @PathVariable("authorId") Long authorId, @PathVariable("status") String status, Pageable pageable) {
+            @PathVariable("authorId") Long authorId,
+            @PathVariable("status") String status,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "desc") String direction) {
+        Sort sort = direction.equalsIgnoreCase("asc")
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(page, size, sort);
         return postService.getAllPostsByAuthorAndStatus(authorId, status, pageable);
     }
 

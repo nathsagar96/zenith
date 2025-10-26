@@ -37,7 +37,7 @@ public class CommentService {
                 comments.stream().map(commentMapper::toResponse).toList());
     }
 
-    public PageResponse<CommentResponse> getAllCommentsByPost(Long postId, Pageable pageable) {
+    public PageResponse<CommentResponse> getAllApprovedCommentsByPost(Long postId, Pageable pageable) {
         var comments = commentRepository.findApprovedByPostId(postId, pageable);
         return new PageResponse<>(
                 comments.getNumber(),
