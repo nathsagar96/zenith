@@ -12,7 +12,6 @@ import com.zenith.mappers.PostMapper;
 import com.zenith.repositories.CategoryRepository;
 import com.zenith.repositories.PostRepository;
 import com.zenith.repositories.TagRepository;
-import com.zenith.repositories.UserRepository;
 import com.zenith.utils.SlugUtils;
 import java.util.HashSet;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class PostService {
     private final PostRepository postRepository;
-    private final UserRepository userRepository;
     private final PostMapper postMapper;
     private final CategoryRepository categoryRepository;
     private final TagRepository tagRepository;
