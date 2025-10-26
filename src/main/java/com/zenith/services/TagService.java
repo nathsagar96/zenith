@@ -17,8 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class TagService {
-    private TagRepository tagRepository;
-    private TagMapper tagMapper;
+    private final TagRepository tagRepository;
+    private final TagMapper tagMapper;
 
     public PageResponse<TagResponse> getAllTags(Pageable pageable) {
         var tags = tagRepository.findAll(pageable);
@@ -37,7 +37,7 @@ public class TagService {
 
     public TagResponse getTagByName(String name) {
         Tag tag = tagRepository
-                .findByName(name)
+                .findByNameIgnoreCase(name)
                 .orElseThrow(() -> new ResourceNotFoundException("Tag not found with name: " + name));
         return tagMapper.toResponse(tag);
     }

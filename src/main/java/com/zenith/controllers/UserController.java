@@ -4,6 +4,7 @@ import com.zenith.dtos.requests.CreateUserRequest;
 import com.zenith.dtos.requests.UpdateUserRequest;
 import com.zenith.dtos.responses.PageResponse;
 import com.zenith.dtos.responses.UserResponse;
+import com.zenith.enums.RoleType;
 import com.zenith.services.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,6 +23,7 @@ public class UserController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ADMIN')")
     public PageResponse<UserResponse> getAllUsers(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -35,6 +38,7 @@ public class UserController {
 
     @GetMapping("/role/{role}")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ADMIN')")
     public PageResponse<UserResponse> getAllUsersByRole(
             @PathVariable("role") String role,
             @RequestParam(defaultValue = "0") int page,
@@ -63,6 +67,7 @@ public class UserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('ADMIN')")
     public UserResponse createUser(@Valid @RequestBody CreateUserRequest request) {
         return userService.createUser(request);
     }
@@ -73,8 +78,23 @@ public class UserController {
         return userService.updateUser(id, request);
     }
 
+    @PatchMapping("/{id}/admin")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ADMIN')")
+    public void makeAdmin(@PathVariable("id") Long id) {
+        userService.updateUserRole(id, RoleType.ADMIN);
+    }
+
+    @PatchMapping("/{id}/user")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ADMIN')")
+    public void makeUser(@PathVariable("id") Long id) {
+        userService.updateUserRole(id, RoleType.USER);
+    }
+
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteUser(@PathVariable("id") Long id) {
         userService.deleteUser(id);
     }

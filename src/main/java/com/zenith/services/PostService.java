@@ -29,6 +29,7 @@ public class PostService {
     private final PostMapper postMapper;
     private final CategoryRepository categoryRepository;
     private final TagRepository tagRepository;
+    private final UserService userService;
 
     public PageResponse<PostResponse> getAllPosts(Pageable pageable) {
         var posts = postRepository.findAll(pageable);
@@ -48,6 +49,21 @@ public class PostService {
                 posts.getTotalElements(),
                 posts.getTotalPages(),
                 posts.stream().map(postMapper::toResponse).toList());
+    }
+
+    public PageResponse<PostResponse> getAllPublishedPostsByAuthor(Long authorId, Pageable pageable) {
+        var posts = postRepository.findByAuthorIdAndStatus(authorId, PostStatus.PUBLISHED, pageable);
+        return new PageResponse<>(
+                posts.getNumber(),
+                posts.getSize(),
+                posts.getTotalElements(),
+                posts.getTotalPages(),
+                posts.stream().map(postMapper::toResponse).toList());
+    }
+
+    public PageResponse<PostResponse> getAllPostsByStatus(PostStatus status, Pageable pageable) {
+        Long currentUserId = userService.getCurrentUser().getId();
+        return getAllPostsByAuthorAndStatus(currentUserId, String.valueOf(status), pageable);
     }
 
     public PageResponse<PostResponse> getAllPostsByAuthorAndStatus(Long authorId, String status, Pageable pageable) {
@@ -71,9 +87,7 @@ public class PostService {
 
     @Transactional
     public PostResponse createPost(CreatePostRequest request) {
-        User author = userRepository
-                .findById(request.authorId())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + request.authorId()));
+        User author = userService.getCurrentUser();
 
         Post newPost = postMapper.toEntity(request);
         newPost.setAuthor(author);
@@ -131,7 +145,7 @@ public class PostService {
     }
 
     @Transactional
-    public void publishPost(long id) {
+    public void publishPost(Long id) {
         Post post = findById(id);
         post.setStatus(PostStatus.PUBLISHED);
         postRepository.save(post);
@@ -148,5 +162,11 @@ public class PostService {
         return postRepository
                 .findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Post not found with id: " + id));
+    }
+
+    public boolean isPostAuthor(Long postId) {
+        Long currentUserId = userService.getCurrentUser().getId();
+        Post post = findById(postId);
+        return post.getAuthor().getId().equals(currentUserId);
     }
 }

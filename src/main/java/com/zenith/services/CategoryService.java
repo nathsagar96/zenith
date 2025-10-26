@@ -37,7 +37,7 @@ public class CategoryService {
 
     public CategoryResponse getCategoryByName(String name) {
         Category category = categoryRepository
-                .findByName(name)
+                .findByNameIgnoreCase(name)
                 .orElseThrow(() -> new ResourceNotFoundException("Category not found with name: " + name));
         return categoryMapper.toResponse(category);
     }

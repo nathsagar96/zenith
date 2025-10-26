@@ -12,7 +12,6 @@ import com.zenith.exceptions.ResourceNotFoundException;
 import com.zenith.mappers.CommentMapper;
 import com.zenith.repositories.CommentRepository;
 import com.zenith.repositories.PostRepository;
-import com.zenith.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -24,8 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class CommentService {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
-    private final UserRepository userRepository;
     private final CommentMapper commentMapper;
+    private final UserService userService;
 
     public PageResponse<CommentResponse> getAllComments(Pageable pageable) {
         var comments = commentRepository.findAll(pageable);
@@ -58,10 +57,15 @@ public class CommentService {
                 comments.getContent().stream().map(commentMapper::toResponse).toList());
     }
 
+    public PageResponse<CommentResponse> getAllCommentsByStatus(CommentStatus status, Pageable pageable) {
+        Long authorId = userService.getCurrentUser().getId();
+        return getAllCommentsByAuthorAndStatus(authorId, String.valueOf(status), pageable);
+    }
+
     public CommentResponse getCommentById(Long id) {
         Comment comment = findById(id);
         if (comment.getStatus() != CommentStatus.APPROVED) {
-            throw new ResourceNotFoundException("Post not found with id: " + id);
+            throw new ResourceNotFoundException("Comment not found with id: " + id);
         }
         return commentMapper.toResponse(comment);
     }
@@ -72,9 +76,7 @@ public class CommentService {
                 .findById(request.postId())
                 .orElseThrow(() -> new ResourceNotFoundException("Post not found with id: " + request.postId()));
 
-        User author = userRepository
-                .findById(request.authorId())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + request.authorId()));
+        User author = userService.getCurrentUser();
 
         Comment newComment = commentMapper.toEntity(request);
         newComment.setPost(post);
@@ -94,14 +96,14 @@ public class CommentService {
     }
 
     @Transactional
-    public void approveComment(long id) {
+    public void approveComment(Long id) {
         Comment comment = findById(id);
         comment.setStatus(CommentStatus.APPROVED);
         commentRepository.save(comment);
     }
 
     @Transactional
-    public void markSpam(long id) {
+    public void markSpam(Long id) {
         Comment comment = findById(id);
         comment.setStatus(CommentStatus.SPAM);
         commentRepository.save(comment);
@@ -110,6 +112,7 @@ public class CommentService {
     @Transactional
     public void archiveComment(Long id) {
         Comment comment = findById(id);
+
         comment.setStatus(CommentStatus.ARCHIVED);
         commentRepository.save(comment);
     }
@@ -118,5 +121,11 @@ public class CommentService {
         return commentRepository
                 .findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Comment not found with id: " + id));
+    }
+
+    public boolean isCommentAuthor(Long commentId) {
+        Long currentUserId = userService.getCurrentUser().getId();
+        Comment comment = findById(commentId);
+        return comment.getAuthor().getId().equals(currentUserId);
     }
 }

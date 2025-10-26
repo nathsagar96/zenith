@@ -3,11 +3,13 @@ spring:
     name: zenith
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
     open-in-view: false
-  sql:
-    init:
-      mode: embedded
+
+app:
+  jwt:
+    secret: your-generated-secret-key-here
+    expiration: 900000 #15 minutes in milliseconds
 
 logging:
   level:

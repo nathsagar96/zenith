@@ -13,5 +13,4 @@ public record UpdateUserRequest(
         @Size(min = 8, max = 100, message = "Password must be between {min} and {max} characters") String password,
         @Size(max = 50, message = "First name must be less than {max} characters") String firstName,
         @Size(max = 50, message = "Last name must be less than {max} characters") String lastName,
-        String bio,
-        String role) {}
+        String bio) {}
