@@ -101,7 +101,7 @@ public class CommentService {
     }
 
     @Transactional
-    public void markCommentSpam(long id) {
+    public void markSpam(long id) {
         Comment comment = findById(id);
         comment.setStatus(CommentStatus.SPAM);
         commentRepository.save(comment);

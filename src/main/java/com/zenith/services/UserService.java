@@ -48,6 +48,13 @@ public class UserService {
         return userMapper.toResponse(user);
     }
 
+    public UserResponse getUserByEmail(String email) {
+        User user = userRepository
+                .findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with email:" + email));
+        return userMapper.toResponse(user);
+    }
+
     @Transactional
     public UserResponse createUser(CreateUserRequest request) {
         if (userRepository.existsByUsername(request.username())) {
