@@ -27,6 +27,7 @@ public class PostRepositoryTest extends BaseDataJpaTest {
     @BeforeEach
     void setUp() {
         postRepository.deleteAll();
+
         author = User.builder()
                 .username("testuser")
                 .email("test@example.com")

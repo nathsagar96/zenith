@@ -32,6 +32,7 @@ public class CommentRepositoryTest extends BaseDataJpaTest {
     @BeforeEach
     void setUp() {
         commentRepository.deleteAll();
+
         author = User.builder()
                 .username("testuser")
                 .email("test@example.com")

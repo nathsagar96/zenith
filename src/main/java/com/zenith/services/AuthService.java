@@ -12,6 +12,7 @@ import com.zenith.security.SecurityUser;
 import io.jsonwebtoken.Claims;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Date;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -75,10 +76,10 @@ public class AuthService {
     }
 
     private LocalDateTime extractExpiration(String token) {
-        return jwtService
-                .extractClaim(token, Claims::getExpiration)
-                .toInstant()
-                .atZone(ZoneId.systemDefault())
-                .toLocalDateTime();
+        Date expirationDate = jwtService.extractClaim(token, Claims::getExpiration);
+        if (expirationDate == null) {
+            throw new IllegalStateException("JWT token does not contain expiration claim");
+        }
+        return expirationDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
     }
 }
