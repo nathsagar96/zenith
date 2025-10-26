@@ -17,10 +17,7 @@ import org.springframework.context.annotation.Configuration;
                         title = "Zenith API",
                         version = "1.0.0",
                         description = "RESTful API for the Zenith application",
-                        contact =
-                                @Contact(
-                                        name = "Zenith Support",
-                                        url = "https://github.com/nathsagar96"),
+                        contact = @Contact(name = "Zenith Support", url = "https://github.com/nathsagar96"),
                         license = @License(name = "MIT License", url = "https://opensource.org/licenses/MIT")),
         servers = {
             @Server(url = "http://localhost:8080", description = "Local Development"),
