@@ -7,6 +7,7 @@ import com.zenith.dtos.responses.UserResponse;
 import com.zenith.entities.User;
 import com.zenith.enums.RoleType;
 import com.zenith.exceptions.DuplicateResourceException;
+import com.zenith.exceptions.ForbiddenException;
 import com.zenith.exceptions.ResourceNotFoundException;
 import com.zenith.exceptions.UnauthorizedException;
 import com.zenith.mappers.UserMapper;
@@ -80,7 +81,7 @@ public class UserService {
     public UserResponse updateUser(long id, UpdateUserRequest request) {
         User currentUser = getCurrentUser();
         if (currentUser.getId() != id && !currentUser.getRole().equals(RoleType.ADMIN)) {
-            throw new UnauthorizedException("You can only update your own profile");
+            throw new ForbiddenException("You can only update your own profile");
         }
 
         User existingUser = findById(id);
@@ -90,7 +91,7 @@ public class UserService {
         }
 
         if (request.email() != null && userRepository.existsByEmail(request.email())) {
-            throw new DuplicateResourceException("User with email: '" + request.username() + "' already exists");
+            throw new DuplicateResourceException("User with email: '" + request.email() + "' already exists");
         }
 
         if (request.password() != null) {

@@ -188,7 +188,7 @@ public class PostController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('ADMIN') or @postService.isPostAuthor(#id)")
-    @Operation(summary = "Delete a post", description = "Archive a post by its ID")
+    @Operation(summary = "Archive a post", description = "Archive a post by its ID")
     @ApiResponse(responseCode = "204", description = "Post archived successfully")
     @ApiResponse(responseCode = "404", description = "Post not found")
     public void archivePost(@PathVariable("id") Long id) {

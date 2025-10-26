@@ -2,7 +2,6 @@ package com.zenith.controllers;
 
 import com.zenith.dtos.requests.LoginRequest;
 import com.zenith.dtos.requests.RegisterRequest;
-import com.zenith.dtos.requests.ResetPasswordRequest;
 import com.zenith.dtos.responses.AuthResponse;
 import com.zenith.services.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,14 +35,5 @@ public class AuthController {
     @ApiResponse(responseCode = "401", description = "Invalid credentials")
     public AuthResponse login(@Valid @RequestBody LoginRequest request) {
         return authService.login(request);
-    }
-
-    @PatchMapping("/reset-password")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Operation(summary = "Reset password", description = "Resets the user's password")
-    @ApiResponse(responseCode = "204", description = "Password reset successfully")
-    @ApiResponse(responseCode = "400", description = "Invalid password reset details")
-    public void resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
-        authService.resetPassword(request);
     }
 }

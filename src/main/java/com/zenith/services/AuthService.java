@@ -2,11 +2,9 @@ package com.zenith.services;
 
 import com.zenith.dtos.requests.LoginRequest;
 import com.zenith.dtos.requests.RegisterRequest;
-import com.zenith.dtos.requests.ResetPasswordRequest;
 import com.zenith.dtos.responses.AuthResponse;
 import com.zenith.entities.User;
 import com.zenith.exceptions.DuplicateResourceException;
-import com.zenith.exceptions.ResourceNotFoundException;
 import com.zenith.exceptions.ValidationException;
 import com.zenith.repositories.UserRepository;
 import com.zenith.security.JwtService;
@@ -57,8 +55,14 @@ public class AuthService {
     }
 
     public AuthResponse login(LoginRequest request) {
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                request.username() != null ? request.username() : request.email(), request.password()));
+        if (request.username() == null && request.email() == null) {
+            throw new ValidationException("Either username or email is required");
+        }
+
+        String username = request.username() != null ? request.username() : request.email();
+
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(username, request.password()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
@@ -68,23 +72,6 @@ public class AuthService {
         LocalDateTime expiresAt = extractExpiration(jwtToken);
 
         return new AuthResponse(jwtToken, expiresAt);
-    }
-
-    public void resetPassword(ResetPasswordRequest request) {
-        String usernameOrEmail =
-                SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepository
-                .findByUsername(usernameOrEmail)
-                .or(() -> userRepository.findByEmail(usernameOrEmail))
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("User not found with username or email: " + usernameOrEmail));
-
-        if (!passwordEncoder.matches(request.oldPassword(), user.getPassword())) {
-            throw new ValidationException("Old password is incorrect");
-        }
-
-        user.setPassword(passwordEncoder.encode(request.newPassword()));
-        userRepository.save(user);
     }
 
     private LocalDateTime extractExpiration(String token) {
