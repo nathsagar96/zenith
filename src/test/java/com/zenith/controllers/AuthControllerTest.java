@@ -13,7 +13,6 @@ import com.zenith.dtos.responses.AuthResponse;
 import com.zenith.exceptions.DuplicateResourceException;
 import com.zenith.security.JwtService;
 import com.zenith.services.AuthService;
-import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -52,7 +51,7 @@ public class AuthControllerTest {
     void setUp() {
         registerRequest = new RegisterRequest("testuser", "test@example.com", "password");
         loginRequest = new LoginRequest("testuser", null, "password");
-        authResponse = new AuthResponse("test-jwt-token", LocalDateTime.now().plusHours(1));
+        authResponse = new AuthResponse("test-jwt-token", 1L);
     }
 
     @Test

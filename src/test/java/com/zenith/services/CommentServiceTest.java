@@ -61,7 +61,7 @@ public class CommentServiceTest {
                 .build();
         comment.setId(1L);
 
-        commentResponse = new CommentResponse(1L, "Test Comment", "APPROVED", 1L, 1L, null, null);
+        commentResponse = new CommentResponse(1L, "Test Comment", "APPROVED", 1L, "johndoe", null, null);
 
         post = new Post();
         post.setId(1L);

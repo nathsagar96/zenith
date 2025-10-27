@@ -13,8 +13,6 @@ import com.zenith.exceptions.ValidationException;
 import com.zenith.repositories.UserRepository;
 import com.zenith.security.JwtService;
 import com.zenith.security.SecurityUser;
-import java.time.LocalDateTime;
-import java.util.Date;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -50,7 +48,7 @@ public class AuthServiceTest {
     private User user;
     private SecurityUser securityUser;
     private String jwtToken;
-    private LocalDateTime expiration;
+    private Long expiration;
 
     @BeforeEach
     void setUp() {
@@ -64,7 +62,7 @@ public class AuthServiceTest {
         user.setId(1L);
         securityUser = new SecurityUser(user);
         jwtToken = "test-jwt-token";
-        expiration = LocalDateTime.now().plusHours(1);
+        expiration = 1L;
     }
 
     @Test
@@ -75,14 +73,12 @@ public class AuthServiceTest {
         when(userRepository.save(any(User.class))).thenReturn(user);
         when(passwordEncoder.encode(anyString())).thenReturn("encodedPassword");
         when(jwtService.generateToken(any(SecurityUser.class))).thenReturn(jwtToken);
-        when(jwtService.extractClaim(eq(jwtToken), any()))
-                .thenReturn(Date.from(
-                        expiration.atZone(java.time.ZoneId.systemDefault()).toInstant()));
+        when(jwtService.getJwtExpiration()).thenReturn(expiration);
         AuthResponse response = authService.register(registerRequest);
 
         assertNotNull(response);
         assertEquals(jwtToken, response.token());
-        assertEquals(expiration.withNano(0), response.expiresAt().withNano(0));
+        assertEquals(expiration, response.expiresIn());
 
         verify(userRepository, times(1)).save(any(User.class));
     }
@@ -114,15 +110,13 @@ public class AuthServiceTest {
                 .thenReturn(authentication);
         when(authentication.getPrincipal()).thenReturn(securityUser);
         when(jwtService.generateToken(any(SecurityUser.class))).thenReturn(jwtToken);
-        when(jwtService.extractClaim(eq(jwtToken), any()))
-                .thenReturn(Date.from(
-                        expiration.atZone(java.time.ZoneId.systemDefault()).toInstant()));
+        when(jwtService.getJwtExpiration()).thenReturn(expiration);
 
         AuthResponse response = authService.login(loginRequest);
 
         assertNotNull(response);
         assertEquals(jwtToken, response.token());
-        assertEquals(expiration.withNano(0), response.expiresAt().withNano(0));
+        assertEquals(expiration, response.expiresIn());
 
         verify(authenticationManager, times(1)).authenticate(any(UsernamePasswordAuthenticationToken.class));
     }

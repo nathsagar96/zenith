@@ -6,6 +6,7 @@ import com.zenith.dtos.responses.PageResponse;
 import com.zenith.dtos.responses.PostResponse;
 import com.zenith.entities.Category;
 import com.zenith.entities.Post;
+import com.zenith.entities.Tag;
 import com.zenith.entities.User;
 import com.zenith.enums.PostStatus;
 import com.zenith.exceptions.ResourceNotFoundException;
@@ -15,6 +16,7 @@ import com.zenith.repositories.PostRepository;
 import com.zenith.repositories.TagRepository;
 import com.zenith.utils.SlugUtils;
 import java.util.HashSet;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -94,23 +96,26 @@ public class PostService {
         String categoryName = request.category();
         Category category = categoryRepository
                 .findByNameIgnoreCase(categoryName)
-                .orElseGet(() -> {
-                    Category newCategory = new Category();
-                    newCategory.setName(categoryName);
-                    return categoryRepository.save(newCategory);
-                });
+                .orElseThrow(
+                        () -> new ResourceNotFoundException("Category not found with name: '" + request.category()));
         newPost.setCategory(category);
 
-        var tags = tagRepository.findAllById(request.tagIds());
-        if (tags.size() != request.tagIds().size()) {
-            throw new ResourceNotFoundException("One or more tags not found");
+        Set<Tag> tags = new HashSet<>();
+        for (String tagName : request.tags()) {
+            Tag tag = tagRepository.findByNameIgnoreCase(tagName).orElseGet(() -> {
+                Tag newTag = Tag.builder().name(tagName).build();
+                return tagRepository.save(newTag);
+            });
+            tags.add(tag);
         }
-        newPost.setTags(new HashSet<>(tags));
+        newPost.setTags(tags);
+
+        String slug = SlugUtils.generateSlug(request.title());
+        newPost.setSlug(slug);
 
         Post createdPost = postRepository.save(newPost);
-        String slug = SlugUtils.generateUniqueSlug(request.title(), createdPost.getId());
-        createdPost.setSlug(slug);
-        return postMapper.toResponse(postRepository.save(createdPost));
+
+        return postMapper.toResponse(createdPost);
     }
 
     @Transactional
@@ -119,7 +124,7 @@ public class PostService {
 
         if (request.title() != null && !request.title().isBlank()) {
             existingPost.setTitle(request.title());
-            String slug = SlugUtils.generateUniqueSlug(request.title(), existingPost.getId());
+            String slug = SlugUtils.generateSlug(request.title());
             existingPost.setSlug(slug);
         }
 
@@ -131,20 +136,21 @@ public class PostService {
             String categoryName = request.category();
             Category category = categoryRepository
                     .findByNameIgnoreCase(categoryName)
-                    .orElseGet(() -> {
-                        Category newCategory = new Category();
-                        newCategory.setName(categoryName);
-                        return categoryRepository.save(newCategory);
-                    });
+                    .orElseThrow(() ->
+                            new ResourceNotFoundException("Category not found with name: '" + request.category()));
             existingPost.setCategory(category);
         }
 
-        if (request.tagIds() != null && !request.tagIds().isEmpty()) {
-            var tags = tagRepository.findAllById(request.tagIds());
-            if (tags.size() != request.tagIds().size()) {
-                throw new ResourceNotFoundException("One or more tags not found");
+        if (request.tags() != null && !request.tags().isEmpty()) {
+            Set<Tag> tags = new HashSet<>();
+            for (String tagName : request.tags()) {
+                Tag tag = tagRepository.findByNameIgnoreCase(tagName).orElseGet(() -> {
+                    Tag newTag = Tag.builder().name(tagName).build();
+                    return tagRepository.save(newTag);
+                });
+                tags.add(tag);
             }
-            existingPost.setTags(new HashSet<>(tags));
+            existingPost.setTags(tags);
         }
 
         Post updatedPost = postRepository.save(existingPost);

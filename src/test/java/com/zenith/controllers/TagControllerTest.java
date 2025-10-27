@@ -2,7 +2,6 @@ package com.zenith.controllers;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -62,8 +61,7 @@ public class TagControllerTest {
                         .param("page", "0")
                         .param("size", "10")
                         .param("sortBy", "createdAt")
-                        .param("direction", "desc")
-                        .with(csrf()))
+                        .param("direction", "desc"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].name").value("Technology"));
     }
@@ -73,7 +71,7 @@ public class TagControllerTest {
     void shouldGetTagByIdSuccessfully() throws Exception {
         when(tagService.getTagById(anyLong())).thenReturn(tagResponse);
 
-        mockMvc.perform(get("/api/v1/tags/1").with(csrf()))
+        mockMvc.perform(get("/api/v1/tags/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Technology"));
     }
@@ -83,7 +81,7 @@ public class TagControllerTest {
     void shouldGetTagByNameSuccessfully() throws Exception {
         when(tagService.getTagByName(anyString())).thenReturn(tagResponse);
 
-        mockMvc.perform(get("/api/v1/tags/name/Technology").with(csrf()))
+        mockMvc.perform(get("/api/v1/tags/name/Technology"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Technology"));
     }

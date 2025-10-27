@@ -26,9 +26,9 @@ public record CreatePostRequest(
                         example = "Technology",
                         requiredMode = Schema.RequiredMode.REQUIRED)
                 String category,
-        @Size(min = 1, message = "At least {min} tag ID is required")
+        @Size(min = 1, message = "At least {min} tag is required")
                 @Schema(
-                        description = "List of tag IDs",
-                        example = "[1, 2]",
+                        description = "List of tag names",
+                        example = "[\"Java\", \"Spring\"]",
                         requiredMode = Schema.RequiredMode.REQUIRED)
-                Set<Long> tagIds) {}
+                Set<String> tags) {}

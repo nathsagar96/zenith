@@ -10,7 +10,7 @@ public record PostResponse(
         @Schema(description = "Post slug", example = "my-first-post") String slug,
         @Schema(description = "Post content", example = "This is the content of my post") String content,
         @Schema(description = "Post status", example = "PUBLISHED") String status,
-        @Schema(description = "ID of the author of this post", example = "1") Long authorId,
+        @Schema(description = "Username of the author of this post", example = "johndoe") String author,
         @Schema(description = "Name of the category of this post", example = "Technology") String category,
         @Schema(description = "Creation timestamp", example = "2023-01-01T00:00:00") LocalDateTime createdAt,
         @Schema(description = "Last update timestamp", example = "2023-01-01T00:00:00") LocalDateTime updatedAt,

@@ -2,7 +2,6 @@ package com.zenith.controllers;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -60,16 +59,18 @@ public class PostControllerTest {
                 "test-post",
                 "This is test content",
                 "PUBLISHED",
-                1L,
+                "johndoe",
                 "Technology",
                 LocalDateTime.now(),
                 LocalDateTime.now(),
                 3,
                 5);
 
-        createPostRequest = new CreatePostRequest("Test Post", "This is test content", "Technology", Set.of(1L));
+        createPostRequest =
+                new CreatePostRequest("Test Post", "This is test content", "Technology", Set.of("Java", "Spring"));
 
-        updatePostRequest = new UpdatePostRequest("Updated Post", "This is updated content", "Technology", Set.of(1L));
+        updatePostRequest = new UpdatePostRequest(
+                "Updated Post", "This is updated content", "Technology", Set.of("Java", "Spring"));
 
         pageResponse = new PageResponse<>(0, 10, 1, 1, List.of(postResponse));
     }
@@ -97,8 +98,7 @@ public class PostControllerTest {
                         .param("page", "0")
                         .param("size", "10")
                         .param("sortBy", "createdAt")
-                        .param("direction", "desc")
-                        .with(csrf()))
+                        .param("direction", "desc"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].title").value("Test Post"));
     }
@@ -112,8 +112,7 @@ public class PostControllerTest {
                         .param("page", "0")
                         .param("size", "10")
                         .param("sortBy", "createdAt")
-                        .param("direction", "desc")
-                        .with(csrf()))
+                        .param("direction", "desc"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].title").value("Test Post"));
     }
@@ -142,8 +141,7 @@ public class PostControllerTest {
                         .param("page", "0")
                         .param("size", "10")
                         .param("sortBy", "createdAt")
-                        .param("direction", "desc")
-                        .with(csrf()))
+                        .param("direction", "desc"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].title").value("Test Post"));
     }
@@ -157,8 +155,7 @@ public class PostControllerTest {
                         .param("page", "0")
                         .param("size", "10")
                         .param("sortBy", "createdAt")
-                        .param("direction", "desc")
-                        .with(csrf()))
+                        .param("direction", "desc"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].title").value("Test Post"));
     }
@@ -172,8 +169,7 @@ public class PostControllerTest {
                         .param("page", "0")
                         .param("size", "10")
                         .param("sortBy", "createdAt")
-                        .param("direction", "desc")
-                        .with(csrf()))
+                        .param("direction", "desc"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].title").value("Test Post"));
     }
@@ -183,7 +179,7 @@ public class PostControllerTest {
     void shouldGetPostByIdSuccessfully() throws Exception {
         when(postService.getPostById(anyLong())).thenReturn(postResponse);
 
-        mockMvc.perform(get("/api/v1/posts/1").with(csrf()))
+        mockMvc.perform(get("/api/v1/posts/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("Test Post"));
     }

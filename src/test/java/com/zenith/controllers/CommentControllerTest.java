@@ -52,7 +52,7 @@ public class CommentControllerTest {
     @BeforeEach
     void setUp() {
         commentResponse = new CommentResponse(
-                1L, "This is a test comment", "APPROVED", 1L, 1L, LocalDateTime.now(), LocalDateTime.now());
+                1L, "This is a test comment", "APPROVED", 1L, "johndoe", LocalDateTime.now(), LocalDateTime.now());
 
         createCommentRequest = new CreateCommentRequest("This is a test comment", 1L);
         updateCommentRequest = new UpdateCommentRequest("This is an updated comment");

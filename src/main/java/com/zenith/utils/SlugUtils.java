@@ -21,9 +21,4 @@ public class SlugUtils {
         slug = EDGESDHASHES.matcher(slug).replaceAll("");
         return slug.toLowerCase(Locale.ENGLISH);
     }
-
-    public static String generateUniqueSlug(String input, Long id) {
-        String baseSlug = generateSlug(input);
-        return id != null ? baseSlug + "-" + id : baseSlug;
-    }
 }

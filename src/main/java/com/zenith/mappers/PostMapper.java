@@ -22,7 +22,7 @@ public interface PostMapper {
     @Mapping(target = "comments", ignore = true)
     Post toEntity(CreatePostRequest request);
 
-    @Mapping(source = "author.id", target = "authorId")
+    @Mapping(source = "author.username", target = "author")
     @Mapping(source = "category.name", target = "category")
     @Mapping(source = "tags", target = "tagCount", qualifiedByName = "tagCount")
     @Mapping(source = "comments", target = "commentCount", qualifiedByName = "commentCount")

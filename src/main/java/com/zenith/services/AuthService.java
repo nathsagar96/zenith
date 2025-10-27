@@ -9,10 +9,6 @@ import com.zenith.exceptions.ValidationException;
 import com.zenith.repositories.UserRepository;
 import com.zenith.security.JwtService;
 import com.zenith.security.SecurityUser;
-import io.jsonwebtoken.Claims;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Date;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -50,9 +46,9 @@ public class AuthService {
         SecurityUser securityUser = new SecurityUser(user);
         String jwtToken = jwtService.generateToken(securityUser);
 
-        LocalDateTime expiresAt = extractExpiration(jwtToken);
+        Long expiresIn = jwtService.getJwtExpiration();
 
-        return new AuthResponse(jwtToken, expiresAt);
+        return new AuthResponse(jwtToken, expiresIn);
     }
 
     public AuthResponse login(LoginRequest request) {
@@ -70,16 +66,8 @@ public class AuthService {
         SecurityUser securityUser = (SecurityUser) authentication.getPrincipal();
         String jwtToken = jwtService.generateToken(securityUser);
 
-        LocalDateTime expiresAt = extractExpiration(jwtToken);
+        Long expiresIn = jwtService.getJwtExpiration();
 
-        return new AuthResponse(jwtToken, expiresAt);
-    }
-
-    private LocalDateTime extractExpiration(String token) {
-        Date expirationDate = jwtService.extractClaim(token, Claims::getExpiration);
-        if (expirationDate == null) {
-            throw new IllegalStateException("JWT token does not contain expiration claim");
-        }
-        return expirationDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+        return new AuthResponse(jwtToken, expiresIn);
     }
 }

@@ -69,7 +69,7 @@ public class PostServiceTest {
         post.setStatus(PostStatus.PUBLISHED);
 
         postResponse = new PostResponse(
-                1L, "Test Post", "test-post", "Test Content", "PUBLISHED", 1L, "Technology", null, null, 0, 0);
+                1L, "Test Post", "test-post", "Test Content", "PUBLISHED", "johndoe", "Technology", null, null, 0, 0);
 
         user = new User();
         user.setId(1L);
@@ -197,32 +197,6 @@ public class PostServiceTest {
     }
 
     @Test
-    @DisplayName("should create a new category when it doesn't exist during post creation")
-    void shouldCreateNewCategoryWhenItDoesntExist() {
-        CreatePostRequest request = new CreatePostRequest("Test Post", "Test Content", "New Category", Set.of(1L));
-
-        when(postMapper.toEntity(any(CreatePostRequest.class))).thenReturn(post);
-        when(categoryRepository.findByNameIgnoreCase(anyString())).thenReturn(Optional.empty());
-        when(categoryRepository.save(any(Category.class))).thenAnswer(invocation -> {
-            Category newCategory = invocation.getArgument(0);
-            newCategory.setId(2L);
-            return newCategory;
-        });
-        when(tagRepository.findAllById(anySet())).thenReturn(List.of(tag));
-        when(postRepository.save(any(Post.class))).thenReturn(post);
-        when(postMapper.toResponse(any(Post.class))).thenReturn(postResponse);
-
-        PostResponse response = postService.createPost(request);
-
-        assertNotNull(response);
-        assertEquals(postResponse, response);
-
-        verify(categoryRepository, times(1)).findByNameIgnoreCase("New Category");
-        verify(categoryRepository, times(1)).save(any(Category.class));
-        verify(postRepository, times(2)).save(any(Post.class));
-    }
-
-    @Test
     @DisplayName("should throw ResourceNotFoundException when post not found by id")
     void shouldThrowResourceNotFoundExceptionWhenPostNotFoundById() {
         when(postRepository.findById(anyLong())).thenReturn(Optional.empty());
@@ -233,12 +207,19 @@ public class PostServiceTest {
     }
 
     @Test
-    @DisplayName("should create post successfully")
-    void shouldCreatePostSuccessfully() {
-        CreatePostRequest request = new CreatePostRequest("Test Post", "Test Content", "Technology", Set.of(1L));
+    @DisplayName("should create post successfully with new tags")
+    void shouldCreatePostSuccessfullyWithNewTags() {
+        CreatePostRequest request =
+                new CreatePostRequest("Test Post", "Test Content", "Technology", Set.of("Java", "Spring"));
 
         when(postMapper.toEntity(any(CreatePostRequest.class))).thenReturn(post);
-        when(tagRepository.findAllById(anySet())).thenReturn(List.of(tag));
+        when(categoryRepository.findByNameIgnoreCase(anyString())).thenReturn(Optional.ofNullable(category));
+        when(tagRepository.findByNameIgnoreCase(anyString())).thenReturn(Optional.empty());
+        when(tagRepository.save(any(Tag.class))).thenAnswer(invocation -> {
+            Tag newTag = invocation.getArgument(0);
+            newTag.setId(1L);
+            return newTag;
+        });
         when(postRepository.save(any(Post.class))).thenReturn(post);
         when(postMapper.toResponse(any(Post.class))).thenReturn(postResponse);
 
@@ -247,40 +228,35 @@ public class PostServiceTest {
         assertNotNull(response);
         assertEquals(postResponse, response);
 
-        verify(postRepository, times(2)).save(any(Post.class));
+        verify(postRepository, times(1)).save(any(Post.class));
+        verify(tagRepository, times(2)).save(any(Tag.class));
     }
 
     @Test
-    @DisplayName("should create a new category when it doesn't exist during post update")
-    void shouldCreateNewCategoryWhenItDoesntExistUpdate() {
-        UpdatePostRequest request =
-                new UpdatePostRequest("Updated Post", "Updated Content", "New Category", Set.of(1L));
+    @DisplayName("should create post successfully with existing tags")
+    void shouldCreatePostSuccessfullyWithExistingTags() {
+        CreatePostRequest request =
+                new CreatePostRequest("Test Post", "Test Content", "Technology", Set.of("Java", "Spring"));
 
-        when(postRepository.findById(anyLong())).thenReturn(Optional.of(post));
-        when(categoryRepository.findByNameIgnoreCase(anyString())).thenReturn(Optional.empty());
-        when(categoryRepository.save(any(Category.class))).thenAnswer(invocation -> {
-            Category newCategory = invocation.getArgument(0);
-            newCategory.setId(2L);
-            return newCategory;
-        });
-        when(tagRepository.findAllById(anySet())).thenReturn(List.of(tag));
+        when(postMapper.toEntity(any(CreatePostRequest.class))).thenReturn(post);
+        when(categoryRepository.findByNameIgnoreCase(anyString())).thenReturn(Optional.ofNullable(category));
+        when(tagRepository.findByNameIgnoreCase(anyString())).thenReturn(Optional.ofNullable(tag));
         when(postRepository.save(any(Post.class))).thenReturn(post);
         when(postMapper.toResponse(any(Post.class))).thenReturn(postResponse);
 
-        PostResponse response = postService.updatePost(1L, request);
+        PostResponse response = postService.createPost(request);
 
         assertNotNull(response);
         assertEquals(postResponse, response);
 
-        verify(categoryRepository, times(1)).findByNameIgnoreCase("New Category");
-        verify(categoryRepository, times(1)).save(any(Category.class));
         verify(postRepository, times(1)).save(any(Post.class));
+        verify(tagRepository, never()).save(any(Tag.class));
     }
 
     @Test
-    @DisplayName("should throw ResourceNotFoundException when tag not found for post creation")
-    void shouldThrowResourceNotFoundExceptionWhenTagNotFoundForPostCreation() {
-        CreatePostRequest request = new CreatePostRequest("Test Post", "Test Content", "Technology", Set.of(2L));
+    @DisplayName("should throw ResourceNotFoundException when category not found for post creation")
+    void shouldThrowResourceNotFoundExceptionWhenCategoryNotFoundForPostCreation() {
+        CreatePostRequest request = new CreatePostRequest("Test Post", "Test Content", "Technology", Set.of("Java"));
 
         when(postMapper.toEntity(any(CreatePostRequest.class))).thenReturn(post);
 
@@ -290,12 +266,19 @@ public class PostServiceTest {
     }
 
     @Test
-    @DisplayName("should update post successfully")
-    void shouldUpdatePostSuccessfully() {
-        UpdatePostRequest request = new UpdatePostRequest("Updated Post", "Updated Content", "Technology", Set.of(1L));
+    @DisplayName("should update post successfully with new tags")
+    void shouldUpdatePostSuccessfullyWithNewTags() {
+        UpdatePostRequest request =
+                new UpdatePostRequest("Updated Post", "Updated Content", "Technology", Set.of("Java", "Spring"));
 
         when(postRepository.findById(anyLong())).thenReturn(Optional.of(post));
-        when(tagRepository.findAllById(anySet())).thenReturn(List.of(tag));
+        when(categoryRepository.findByNameIgnoreCase(anyString())).thenReturn(Optional.ofNullable(category));
+        when(tagRepository.findByNameIgnoreCase(anyString())).thenReturn(Optional.empty());
+        when(tagRepository.save(any(Tag.class))).thenAnswer(invocation -> {
+            Tag newTag = invocation.getArgument(0);
+            newTag.setId(1L);
+            return newTag;
+        });
         when(postRepository.save(any(Post.class))).thenReturn(post);
         when(postMapper.toResponse(any(Post.class))).thenReturn(postResponse);
 
@@ -305,14 +288,50 @@ public class PostServiceTest {
         assertEquals(postResponse, response);
 
         verify(postRepository, times(1)).save(any(Post.class));
+        verify(tagRepository, times(2)).save(any(Tag.class));
+    }
+
+    @Test
+    @DisplayName("should update post successfully with existing tags")
+    void shouldUpdatePostSuccessfullyWithExistingTags() {
+        UpdatePostRequest request =
+                new UpdatePostRequest("Updated Post", "Updated Content", "Technology", Set.of("Java", "Spring"));
+
+        when(postRepository.findById(anyLong())).thenReturn(Optional.of(post));
+        when(categoryRepository.findByNameIgnoreCase(anyString())).thenReturn(Optional.ofNullable(category));
+        when(tagRepository.findByNameIgnoreCase(anyString())).thenReturn(Optional.of(tag));
+        when(postRepository.save(any(Post.class))).thenReturn(post);
+        when(postMapper.toResponse(any(Post.class))).thenReturn(postResponse);
+
+        PostResponse response = postService.updatePost(1L, request);
+
+        assertNotNull(response);
+        assertEquals(postResponse, response);
+
+        verify(postRepository, times(1)).save(any(Post.class));
+        verify(tagRepository, never()).save(any(Tag.class));
     }
 
     @Test
     @DisplayName("should throw ResourceNotFoundException when post not found for update")
     void shouldThrowResourceNotFoundExceptionWhenPostNotFoundForUpdate() {
-        UpdatePostRequest request = new UpdatePostRequest("Updated Post", "Updated Content", "Technology", Set.of(1L));
+        UpdatePostRequest request =
+                new UpdatePostRequest("Updated Post", "Updated Content", "Technology", Set.of("Java"));
 
         when(postRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class, () -> postService.updatePost(1L, request));
+
+        verify(postRepository, never()).save(any(Post.class));
+    }
+
+    @Test
+    @DisplayName("should throw ResourceNotFoundException when category not found for post update")
+    void shouldThrowResourceNotFoundExceptionWhenCategoryNotFoundForPostUpdate() {
+        UpdatePostRequest request =
+                new UpdatePostRequest("Updated Post", "Updated Content", "Technology", Set.of("Java"));
+
+        when(postRepository.findById(anyLong())).thenReturn(Optional.of(post));
 
         assertThrows(ResourceNotFoundException.class, () -> postService.updatePost(1L, request));
 
