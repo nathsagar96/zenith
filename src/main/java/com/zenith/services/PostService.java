@@ -91,10 +91,14 @@ public class PostService {
         Post newPost = postMapper.toEntity(request);
         newPost.setAuthor(author);
 
+        String categoryName = request.category();
         Category category = categoryRepository
-                .findById(request.categoryId())
-                .orElseThrow(
-                        () -> new ResourceNotFoundException("Category not found with id: " + request.categoryId()));
+                .findByNameIgnoreCase(categoryName)
+                .orElseGet(() -> {
+                    Category newCategory = new Category();
+                    newCategory.setName(categoryName);
+                    return categoryRepository.save(newCategory);
+                });
         newPost.setCategory(category);
 
         var tags = tagRepository.findAllById(request.tagIds());
@@ -123,11 +127,15 @@ public class PostService {
             existingPost.setContent(request.content());
         }
 
-        if (request.categoryId() != null) {
+        if (request.category() != null && !request.category().isBlank()) {
+            String categoryName = request.category();
             Category category = categoryRepository
-                    .findById(request.categoryId())
-                    .orElseThrow(
-                            () -> new ResourceNotFoundException("Category not found with id: " + request.categoryId()));
+                    .findByNameIgnoreCase(categoryName)
+                    .orElseGet(() -> {
+                        Category newCategory = new Category();
+                        newCategory.setName(categoryName);
+                        return categoryRepository.save(newCategory);
+                    });
             existingPost.setCategory(category);
         }
 

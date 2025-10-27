@@ -23,7 +23,7 @@ public interface PostMapper {
     Post toEntity(CreatePostRequest request);
 
     @Mapping(source = "author.id", target = "authorId")
-    @Mapping(source = "category.id", target = "categoryId")
+    @Mapping(source = "category.name", target = "category")
     @Mapping(source = "tags", target = "tagCount", qualifiedByName = "tagCount")
     @Mapping(source = "comments", target = "commentCount", qualifiedByName = "commentCount")
     PostResponse toResponse(Post post);

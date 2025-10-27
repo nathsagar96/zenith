@@ -68,8 +68,8 @@ public class PostServiceTest {
         post.setContent("Test Content");
         post.setStatus(PostStatus.PUBLISHED);
 
-        postResponse =
-                new PostResponse(1L, "Test Post", "test-post", "Test Content", "PUBLISHED", 1L, 1L, null, null, 0, 0);
+        postResponse = new PostResponse(
+                1L, "Test Post", "test-post", "Test Content", "PUBLISHED", 1L, "Technology", null, null, 0, 0);
 
         user = new User();
         user.setId(1L);
@@ -197,6 +197,32 @@ public class PostServiceTest {
     }
 
     @Test
+    @DisplayName("should create a new category when it doesn't exist during post creation")
+    void shouldCreateNewCategoryWhenItDoesntExist() {
+        CreatePostRequest request = new CreatePostRequest("Test Post", "Test Content", "New Category", Set.of(1L));
+
+        when(postMapper.toEntity(any(CreatePostRequest.class))).thenReturn(post);
+        when(categoryRepository.findByNameIgnoreCase(anyString())).thenReturn(Optional.empty());
+        when(categoryRepository.save(any(Category.class))).thenAnswer(invocation -> {
+            Category newCategory = invocation.getArgument(0);
+            newCategory.setId(2L);
+            return newCategory;
+        });
+        when(tagRepository.findAllById(anySet())).thenReturn(List.of(tag));
+        when(postRepository.save(any(Post.class))).thenReturn(post);
+        when(postMapper.toResponse(any(Post.class))).thenReturn(postResponse);
+
+        PostResponse response = postService.createPost(request);
+
+        assertNotNull(response);
+        assertEquals(postResponse, response);
+
+        verify(categoryRepository, times(1)).findByNameIgnoreCase("New Category");
+        verify(categoryRepository, times(1)).save(any(Category.class));
+        verify(postRepository, times(2)).save(any(Post.class));
+    }
+
+    @Test
     @DisplayName("should throw ResourceNotFoundException when post not found by id")
     void shouldThrowResourceNotFoundExceptionWhenPostNotFoundById() {
         when(postRepository.findById(anyLong())).thenReturn(Optional.empty());
@@ -209,10 +235,9 @@ public class PostServiceTest {
     @Test
     @DisplayName("should create post successfully")
     void shouldCreatePostSuccessfully() {
-        CreatePostRequest request = new CreatePostRequest("Test Post", "Test Content", 1L, Set.of(1L));
+        CreatePostRequest request = new CreatePostRequest("Test Post", "Test Content", "Technology", Set.of(1L));
 
         when(postMapper.toEntity(any(CreatePostRequest.class))).thenReturn(post);
-        when(categoryRepository.findById(anyLong())).thenReturn(Optional.of(category));
         when(tagRepository.findAllById(anySet())).thenReturn(List.of(tag));
         when(postRepository.save(any(Post.class))).thenReturn(post);
         when(postMapper.toResponse(any(Post.class))).thenReturn(postResponse);
@@ -226,21 +251,36 @@ public class PostServiceTest {
     }
 
     @Test
-    @DisplayName("should throw ResourceNotFoundException when category not found for post creation")
-    void shouldThrowResourceNotFoundExceptionWhenCategoryNotFoundForPostCreation() {
-        CreatePostRequest request = new CreatePostRequest("Test Post", "Test Content", 2L, Set.of(1L));
+    @DisplayName("should create a new category when it doesn't exist during post update")
+    void shouldCreateNewCategoryWhenItDoesntExistUpdate() {
+        UpdatePostRequest request =
+                new UpdatePostRequest("Updated Post", "Updated Content", "New Category", Set.of(1L));
 
-        when(postMapper.toEntity(any(CreatePostRequest.class))).thenReturn(post);
+        when(postRepository.findById(anyLong())).thenReturn(Optional.of(post));
+        when(categoryRepository.findByNameIgnoreCase(anyString())).thenReturn(Optional.empty());
+        when(categoryRepository.save(any(Category.class))).thenAnswer(invocation -> {
+            Category newCategory = invocation.getArgument(0);
+            newCategory.setId(2L);
+            return newCategory;
+        });
+        when(tagRepository.findAllById(anySet())).thenReturn(List.of(tag));
+        when(postRepository.save(any(Post.class))).thenReturn(post);
+        when(postMapper.toResponse(any(Post.class))).thenReturn(postResponse);
 
-        assertThrows(ResourceNotFoundException.class, () -> postService.createPost(request));
+        PostResponse response = postService.updatePost(1L, request);
 
-        verify(postRepository, never()).save(any(Post.class));
+        assertNotNull(response);
+        assertEquals(postResponse, response);
+
+        verify(categoryRepository, times(1)).findByNameIgnoreCase("New Category");
+        verify(categoryRepository, times(1)).save(any(Category.class));
+        verify(postRepository, times(1)).save(any(Post.class));
     }
 
     @Test
     @DisplayName("should throw ResourceNotFoundException when tag not found for post creation")
     void shouldThrowResourceNotFoundExceptionWhenTagNotFoundForPostCreation() {
-        CreatePostRequest request = new CreatePostRequest("Test Post", "Test Content", 1L, Set.of(2L));
+        CreatePostRequest request = new CreatePostRequest("Test Post", "Test Content", "Technology", Set.of(2L));
 
         when(postMapper.toEntity(any(CreatePostRequest.class))).thenReturn(post);
 
@@ -252,10 +292,9 @@ public class PostServiceTest {
     @Test
     @DisplayName("should update post successfully")
     void shouldUpdatePostSuccessfully() {
-        UpdatePostRequest request = new UpdatePostRequest("Updated Post", "Updated Content", 1L, Set.of(1L));
+        UpdatePostRequest request = new UpdatePostRequest("Updated Post", "Updated Content", "Technology", Set.of(1L));
 
         when(postRepository.findById(anyLong())).thenReturn(Optional.of(post));
-        when(categoryRepository.findById(anyLong())).thenReturn(Optional.of(category));
         when(tagRepository.findAllById(anySet())).thenReturn(List.of(tag));
         when(postRepository.save(any(Post.class))).thenReturn(post);
         when(postMapper.toResponse(any(Post.class))).thenReturn(postResponse);
@@ -271,7 +310,7 @@ public class PostServiceTest {
     @Test
     @DisplayName("should throw ResourceNotFoundException when post not found for update")
     void shouldThrowResourceNotFoundExceptionWhenPostNotFoundForUpdate() {
-        UpdatePostRequest request = new UpdatePostRequest("Updated Post", "Updated Content", 1L, Set.of(1L));
+        UpdatePostRequest request = new UpdatePostRequest("Updated Post", "Updated Content", "Technology", Set.of(1L));
 
         when(postRepository.findById(anyLong())).thenReturn(Optional.empty());
 

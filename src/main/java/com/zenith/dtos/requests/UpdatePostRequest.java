@@ -10,5 +10,5 @@ public record UpdatePostRequest(
                 @Schema(description = "Updated post title", example = "Updated Post Title")
                 String title,
         @Schema(description = "Updated post content", example = "This is the updated content") String content,
-        @Schema(description = "Updated category ID", example = "1") Long categoryId,
+        @Schema(description = "Updated category name", example = "Technology") String category,
         @Schema(description = "Updated list of tag IDs", example = "[1, 2]") Set<Long> tagIds) {}
