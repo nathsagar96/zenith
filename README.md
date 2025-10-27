@@ -166,7 +166,7 @@ The application provides comprehensive REST APIs for all operations:
   {
     "title": "My First Post",
     "content": "This is the content of my post",
-    "categoryIds": [1, 2],
+    "categoryId": 1,
     "tagIds": [1, 2]
   }
   ```
