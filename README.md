@@ -29,7 +29,7 @@ Zenith is a comprehensive blog application built with Spring Boot that provides 
 
 The project follows a clean architecture with clear separation of concerns:
 
-```
+```file
 src/main/java/com/zenith/
 ├── controllers/          # REST API controllers
 ├── dtos/                 # Data Transfer Objects
@@ -57,22 +57,36 @@ src/main/java/com/zenith/
 
 1. Clone the repository:
 
-   ```bash
-   git clone https://github.com/nathsagar96/zenith.git
-   cd zenith
-   ```
+    ```bash
+    git clone https://github.com/nathsagar96/zenith.git
+    cd zenith
+    ```
 
 2. Build the project:
 
-   ```bash
-   ./mvnw clean install
-   ```
+    ```bash
+    ./mvnw clean install
+    ```
 
-3. Run the application:
+3. Generate and set the JWT secret key:
 
-   ```bash
-   ./mvnw spring-boot:run
-   ```
+    ```bash
+    # Generate a secure random key (you can use openssl or any other method)
+    JWT_SECRET=$(openssl rand -base64 32)
+
+    # Set it as an environment variable
+    export APP_JWT_SECRET=$JWT_SECRET
+
+    # Alternatively, update the application.yml file:
+    # Edit src/main/resources/application.yml and set:
+    # app.jwt.secret: your-generated-secret-key-here
+    ```
+
+4. Run the application:
+
+    ```bash
+    ./mvnw spring-boot:run
+    ```
 
 ## Usage Examples
 
@@ -208,6 +222,82 @@ This will automatically format all Java files according to the configured rules.
 - If formatting fails, check your Maven configuration
 - Ensure you have the Spotless plugin properly configured in your `pom.xml`
 - Verify that all required dependencies are available
+
+## Running Tests
+
+### Test Setup
+
+The project uses JUnit 5 for testing and Testcontainers for database integration tests. All tests are located in the `src/test/java/com/zenith/` directory.
+
+### Running All Tests
+
+To run all tests, use the following Maven command:
+
+```bash
+./mvnw test
+```
+
+### Running Specific Tests
+
+To run tests for a specific module (e.g., controllers), use:
+
+```bash
+./mvnw test -Dtest=AuthControllerTest
+```
+
+### Test Structure
+
+- **Unit Tests**: Test individual components in isolation
+- **Controller Tests**: Test REST API endpoints using MockMvc
+- **Repository Tests**: Test database operations using Testcontainers
+
+### Expected Outcomes
+
+- All tests should pass with green status
+- Test reports are generated in `target/surefire-reports/`
+
+### Troubleshooting Tests
+
+- Ensure Docker is running for Testcontainers
+- Check database connection settings
+- Verify all required environment variables are set
+
+## Building Docker Image
+
+Spring Boot 3.5 provides default support for building Docker images using buildpacks. This allows you to easily containerize your application without writing a Dockerfile.
+
+### Using Maven
+
+To build a Docker image with Maven, run the following command:
+
+```bash
+./mvnw spring-boot:build-image
+```
+
+This command will:
+
+1. Use the Spring Boot buildpack to create an optimized Docker image
+2. Automatically handle all dependencies and configuration
+3. Produce a production-ready container image
+
+### Using the Docker Image
+
+After building the image, you can run it with:
+
+```bash
+docker run --rm -p 8080:8080 your-image-name
+```
+
+Replace `your-image-name` with the actual name of the generated image, add spring data source environment variables
+
+### Benefits
+
+- **Optimized Size**: Spring Boot buildpacks create efficient images with only necessary dependencies
+- **Security**: Images are built with security best practices
+- **Portability**: Runs consistently across different environments
+- **Performance**: Optimized for fast startup and low memory footprint
+
+For more details on customizing the build process, refer to the [Spring Boot documentation](https://docs.spring.io/spring-boot/maven-plugin/build-image.html#build-image).
 
 ## Contributing
 
