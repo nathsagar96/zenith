@@ -262,6 +262,20 @@ To run tests for a specific module (e.g., controllers), use:
 - Check database connection settings
 - Verify all required environment variables are set
 
+## Setting Up Test Data
+
+The application includes a data initializer that sets up default test data for development and testing purposes. This includes:
+
+- Default categories (Technology, Lifestyle, Travel)
+- Common tags (Java, Spring, Travel, Lifestyle)
+- Test users with different roles (admin and regular users)
+- Sample blog posts in various states (draft, published, archived)
+- Comments with different statuses (approved, pending, spam, archived)
+
+To use this test data, simply run the application normally. The data initializer is configured to run automatically on application startup.
+
+The test data configuration is located in [`DataInitializer.java`](src/main/java/com/zenith/configs/DataInitializer.java).
+
 ## Building Docker Image
 
 Spring Boot 3.5 provides default support for building Docker images using buildpacks. This allows you to easily containerize your application without writing a Dockerfile.
