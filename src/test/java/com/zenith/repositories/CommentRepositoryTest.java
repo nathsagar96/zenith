@@ -3,6 +3,7 @@ package com.zenith.repositories;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.zenith.BaseDataJpaTest;
+import com.zenith.entities.Category;
 import com.zenith.entities.Comment;
 import com.zenith.entities.Post;
 import com.zenith.entities.User;
@@ -24,6 +25,9 @@ public class CommentRepositoryTest extends BaseDataJpaTest {
     private UserRepository userRepository;
 
     @Autowired
+    private CategoryRepository categoryRepository;
+
+    @Autowired
     private PostRepository postRepository;
 
     private User author;
@@ -40,11 +44,15 @@ public class CommentRepositoryTest extends BaseDataJpaTest {
                 .build();
         userRepository.save(author);
 
+        Category category = Category.builder().name("testcategory").build();
+        categoryRepository.save(category);
+
         post = Post.builder()
                 .title("Test Post")
                 .slug("test-post")
                 .content("Test Content")
                 .author(author)
+                .category(category)
                 .build();
         postRepository.save(post);
     }

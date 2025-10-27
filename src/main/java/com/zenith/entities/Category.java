@@ -18,6 +18,6 @@ public class Category extends BaseEntity {
     private String name;
 
     @Builder.Default
-    @ManyToMany(mappedBy = "categories")
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Post> posts = new ArrayList<>();
 }

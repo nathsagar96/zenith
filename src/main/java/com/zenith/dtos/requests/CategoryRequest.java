@@ -8,5 +8,8 @@ import jakarta.validation.constraints.Size;
 public record CategoryRequest(
         @NotBlank(message = "Name is required")
                 @Size(max = 50, message = "Name must be less than {max} characters")
-                @Schema(description = "Category name", example = "Technology", required = true)
+                @Schema(
+                        description = "Category name",
+                        example = "Technology",
+                        requiredMode = Schema.RequiredMode.REQUIRED)
                 String name) {}

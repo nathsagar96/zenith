@@ -14,5 +14,8 @@ public record LoginRequest(
                 String email,
         @NotBlank(message = "Password is required")
                 @Size(min = 8, max = 100, message = "Password must be between {min} and {max} characters")
-                @Schema(description = "User password", example = "password123", required = true)
+                @Schema(
+                        description = "User password",
+                        example = "password123",
+                        requiredMode = Schema.RequiredMode.REQUIRED)
                 String password) {}

@@ -13,14 +13,20 @@ public record RegisterRequest(
                         regexp = "^[a-zA-Z0-9_]+$",
                         message = "Username can only contain letters, numbers, and underscores")
                 @Size(max = 50, message = "Username must be less than {max} characters")
-                @Schema(description = "Username", example = "john_doe", required = true)
+                @Schema(description = "Username", example = "john_doe", requiredMode = Schema.RequiredMode.REQUIRED)
                 String username,
         @NotBlank(message = "Email is required")
                 @Email(message = "Email must be valid")
                 @Size(max = 100, message = "Email must be less than {max} characters")
-                @Schema(description = "User email", example = "john@example.com", required = true)
+                @Schema(
+                        description = "User email",
+                        example = "john@example.com",
+                        requiredMode = Schema.RequiredMode.REQUIRED)
                 String email,
         @NotBlank(message = "Password is required")
                 @Size(min = 8, max = 100, message = "Password must be between {min} and {max} characters")
-                @Schema(description = "User password", example = "password123", required = true)
+                @Schema(
+                        description = "User password",
+                        example = "password123",
+                        requiredMode = Schema.RequiredMode.REQUIRED)
                 String password) {}

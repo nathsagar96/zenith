@@ -84,7 +84,7 @@ public class DataInitializer {
                             "In this post, I'll share some of the best practices I've learned while working with Spring Boot...")
                     .status(PostStatus.DRAFT)
                     .author(johnDoe)
-                    .categories(Set.of(techCategory))
+                    .category(techCategory)
                     .tags(Set.of(javaTag, springTag))
                     .build();
             adminDraftPost = postRepository.save(adminDraftPost);
@@ -96,7 +96,7 @@ public class DataInitializer {
                             "Java Streams have revolutionized how we process collections in Java. Let's dive deep into their capabilities...")
                     .status(PostStatus.PUBLISHED)
                     .author(johnDoe)
-                    .categories(Set.of(techCategory))
+                    .category(techCategory)
                     .tags(Set.of(javaTag))
                     .build();
             adminPublishedPost = postRepository.save(adminPublishedPost);
@@ -108,7 +108,7 @@ public class DataInitializer {
                             "While still useful in some contexts, many Java EE patterns have been replaced by simpler approaches...")
                     .status(PostStatus.ARCHIVED)
                     .author(johnDoe)
-                    .categories(Set.of(techCategory))
+                    .category(techCategory)
                     .tags(Set.of(javaTag))
                     .build();
             adminArchivedPost = postRepository.save(adminArchivedPost);
@@ -121,7 +121,7 @@ public class DataInitializer {
                             "I've been experimenting with different morning routines to boost my productivity. Here's what works for me...")
                     .status(PostStatus.DRAFT)
                     .author(aliceSmith)
-                    .categories(Set.of(lifestyleCategory))
+                    .category(lifestyleCategory)
                     .tags(Set.of(lifestyleTag))
                     .build();
             testUser1DraftPost = postRepository.save(testUser1DraftPost);
@@ -133,7 +133,7 @@ public class DataInitializer {
                             "In today's fast-paced world, maintaining work-life balance is crucial. Here are my top 10 tips...")
                     .status(PostStatus.PUBLISHED)
                     .author(aliceSmith)
-                    .categories(Set.of(lifestyleCategory))
+                    .category(lifestyleCategory)
                     .tags(Set.of(lifestyleTag))
                     .build();
             testUser1PublishedPost = postRepository.save(testUser1PublishedPost);
@@ -145,7 +145,7 @@ public class DataInitializer {
                             "Fashion trends from the 90s are making a big comeback. Let's explore which ones are worth trying...")
                     .status(PostStatus.ARCHIVED)
                     .author(aliceSmith)
-                    .categories(Set.of(lifestyleCategory))
+                    .category(lifestyleCategory)
                     .tags(Set.of(lifestyleTag))
                     .build();
             testUser1ArchivedPost = postRepository.save(testUser1ArchivedPost);
@@ -158,7 +158,7 @@ public class DataInitializer {
                             "During my recent trip, I discovered some amazing hidden gems in Southeast Asia. Here are my favorites...")
                     .status(PostStatus.DRAFT)
                     .author(bobJones)
-                    .categories(Set.of(travelCategory))
+                    .category(travelCategory)
                     .tags(Set.of(travelTag))
                     .build();
             testUser2DraftPost = postRepository.save(testUser2DraftPost);
@@ -170,7 +170,7 @@ public class DataInitializer {
                             "Solo travel can be intimidating but incredibly rewarding. Here's my comprehensive guide...")
                     .status(PostStatus.PUBLISHED)
                     .author(bobJones)
-                    .categories(Set.of(travelCategory))
+                    .category(travelCategory)
                     .tags(Set.of(travelTag))
                     .build();
             testUser2PublishedPost = postRepository.save(testUser2PublishedPost);
@@ -182,7 +182,7 @@ public class DataInitializer {
                             "You don't need to be rich to travel the world. Here are my best tips for budget travel...")
                     .status(PostStatus.ARCHIVED)
                     .author(bobJones)
-                    .categories(Set.of(travelCategory))
+                    .category(travelCategory)
                     .tags(Set.of(travelTag))
                     .build();
             testUser2ArchivedPost = postRepository.save(testUser2ArchivedPost);

@@ -2,6 +2,7 @@ package com.zenith.dtos.requests;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.util.Set;
 
@@ -9,14 +10,23 @@ import java.util.Set;
 public record CreatePostRequest(
         @NotBlank(message = "Title is required")
                 @Size(max = 100, message = "Title must be less than {max} characters")
-                @Schema(description = "Post title", example = "My First Post", required = true)
+                @Schema(
+                        description = "Post title",
+                        example = "My First Post",
+                        requiredMode = Schema.RequiredMode.REQUIRED)
                 String title,
         @NotBlank(message = "Content is required")
-                @Schema(description = "Post content", example = "This is the content of my post", required = true)
+                @Schema(
+                        description = "Post content",
+                        example = "This is the content of my post",
+                        requiredMode = Schema.RequiredMode.REQUIRED)
                 String content,
-        @Size(min = 1, message = "At least {min} category ID is required")
-                @Schema(description = "List of category IDs", example = "[1, 2]", required = true)
-                Set<Long> categoryIds,
+        @NotNull(message = "Category ID is required")
+                @Schema(description = "Category ID", example = "1", requiredMode = Schema.RequiredMode.REQUIRED)
+                Long categoryId,
         @Size(min = 1, message = "At least {min} tag ID is required")
-                @Schema(description = "List of tag IDs", example = "[1, 2]", required = true)
+                @Schema(
+                        description = "List of tag IDs",
+                        example = "[1, 2]",
+                        requiredMode = Schema.RequiredMode.REQUIRED)
                 Set<Long> tagIds) {}

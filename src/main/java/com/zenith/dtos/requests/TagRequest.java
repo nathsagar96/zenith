@@ -8,5 +8,5 @@ import jakarta.validation.constraints.Size;
 public record TagRequest(
         @NotBlank(message = "Name is required")
                 @Size(max = 50, message = "Name must be less than {max} characters")
-                @Schema(description = "Tag name", example = "Java", required = true)
+                @Schema(description = "Tag name", example = "Java", requiredMode = Schema.RequiredMode.REQUIRED)
                 String name) {}

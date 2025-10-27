@@ -3,6 +3,7 @@ package com.zenith.repositories;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.zenith.BaseDataJpaTest;
+import com.zenith.entities.Category;
 import com.zenith.entities.Post;
 import com.zenith.entities.User;
 import com.zenith.enums.PostStatus;
@@ -22,7 +23,11 @@ public class PostRepositoryTest extends BaseDataJpaTest {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private CategoryRepository categoryRepository;
+
     private User author;
+    private Category category;
 
     @BeforeEach
     void setUp() {
@@ -35,6 +40,9 @@ public class PostRepositoryTest extends BaseDataJpaTest {
                 .build();
 
         userRepository.save(author);
+
+        category = Category.builder().name("testcategory").build();
+        categoryRepository.save(category);
     }
 
     @Test
@@ -47,6 +55,7 @@ public class PostRepositoryTest extends BaseDataJpaTest {
                 .content("Test Content")
                 .status(PostStatus.PUBLISHED)
                 .author(author)
+                .category(category)
                 .build();
         postRepository.save(post);
 
@@ -70,6 +79,7 @@ public class PostRepositoryTest extends BaseDataJpaTest {
                 .content("Test Content")
                 .status(PostStatus.PUBLISHED)
                 .author(author)
+                .category(category)
                 .build();
         postRepository.save(post);
 

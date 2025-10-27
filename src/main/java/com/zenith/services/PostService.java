@@ -4,6 +4,7 @@ import com.zenith.dtos.requests.CreatePostRequest;
 import com.zenith.dtos.requests.UpdatePostRequest;
 import com.zenith.dtos.responses.PageResponse;
 import com.zenith.dtos.responses.PostResponse;
+import com.zenith.entities.Category;
 import com.zenith.entities.Post;
 import com.zenith.entities.User;
 import com.zenith.enums.PostStatus;
@@ -90,11 +91,11 @@ public class PostService {
         Post newPost = postMapper.toEntity(request);
         newPost.setAuthor(author);
 
-        var categories = categoryRepository.findAllById(request.categoryIds());
-        if (categories.size() != request.categoryIds().size()) {
-            throw new ResourceNotFoundException("One or more categories not found");
-        }
-        newPost.setCategories(new HashSet<>(categories));
+        Category category = categoryRepository
+                .findById(request.categoryId())
+                .orElseThrow(
+                        () -> new ResourceNotFoundException("Category not found with id: " + request.categoryId()));
+        newPost.setCategory(category);
 
         var tags = tagRepository.findAllById(request.tagIds());
         if (tags.size() != request.tagIds().size()) {
@@ -122,12 +123,12 @@ public class PostService {
             existingPost.setContent(request.content());
         }
 
-        if (request.categoryIds() != null && !request.categoryIds().isEmpty()) {
-            var categories = categoryRepository.findAllById(request.categoryIds());
-            if (categories.size() != request.categoryIds().size()) {
-                throw new ResourceNotFoundException("One or more categories not found");
-            }
-            existingPost.setCategories(new HashSet<>(categories));
+        if (request.categoryId() != null) {
+            Category category = categoryRepository
+                    .findById(request.categoryId())
+                    .orElseThrow(
+                            () -> new ResourceNotFoundException("Category not found with id: " + request.categoryId()));
+            existingPost.setCategory(category);
         }
 
         if (request.tagIds() != null && !request.tagIds().isEmpty()) {

@@ -61,15 +61,15 @@ public class PostControllerTest {
                 "This is test content",
                 "PUBLISHED",
                 1L,
+                1L,
                 LocalDateTime.now(),
                 LocalDateTime.now(),
-                2,
                 3,
                 5);
 
-        createPostRequest = new CreatePostRequest("Test Post", "This is test content", Set.of(1L), Set.of(1L));
+        createPostRequest = new CreatePostRequest("Test Post", "This is test content", 1L, Set.of(1L));
 
-        updatePostRequest = new UpdatePostRequest("Updated Post", "This is updated content", Set.of(1L), Set.of(1L));
+        updatePostRequest = new UpdatePostRequest("Updated Post", "This is updated content", 1L, Set.of(1L));
 
         pageResponse = new PageResponse<>(0, 10, 1, 1, List.of(postResponse));
     }

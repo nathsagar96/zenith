@@ -9,5 +9,5 @@ public record UpdateCommentRequest(
                 @Schema(
                         description = "Updated comment content",
                         example = "This is an updated comment",
-                        required = true)
+                        requiredMode = Schema.RequiredMode.REQUIRED)
                 String content) {}

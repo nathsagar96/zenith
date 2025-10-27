@@ -69,7 +69,7 @@ public class PostServiceTest {
         post.setStatus(PostStatus.PUBLISHED);
 
         postResponse =
-                new PostResponse(1L, "Test Post", "test-post", "Test Content", "PUBLISHED", 1L, null, null, 0, 0, 0);
+                new PostResponse(1L, "Test Post", "test-post", "Test Content", "PUBLISHED", 1L, 1L, null, null, 0, 0);
 
         user = new User();
         user.setId(1L);
@@ -209,10 +209,10 @@ public class PostServiceTest {
     @Test
     @DisplayName("should create post successfully")
     void shouldCreatePostSuccessfully() {
-        CreatePostRequest request = new CreatePostRequest("Test Post", "Test Content", Set.of(1L), Set.of(1L));
+        CreatePostRequest request = new CreatePostRequest("Test Post", "Test Content", 1L, Set.of(1L));
 
         when(postMapper.toEntity(any(CreatePostRequest.class))).thenReturn(post);
-        when(categoryRepository.findAllById(anySet())).thenReturn(List.of(category));
+        when(categoryRepository.findById(anyLong())).thenReturn(Optional.of(category));
         when(tagRepository.findAllById(anySet())).thenReturn(List.of(tag));
         when(postRepository.save(any(Post.class))).thenReturn(post);
         when(postMapper.toResponse(any(Post.class))).thenReturn(postResponse);
@@ -228,7 +228,7 @@ public class PostServiceTest {
     @Test
     @DisplayName("should throw ResourceNotFoundException when category not found for post creation")
     void shouldThrowResourceNotFoundExceptionWhenCategoryNotFoundForPostCreation() {
-        CreatePostRequest request = new CreatePostRequest("Test Post", "Test Content", Set.of(2L), Set.of(1L));
+        CreatePostRequest request = new CreatePostRequest("Test Post", "Test Content", 2L, Set.of(1L));
 
         when(postMapper.toEntity(any(CreatePostRequest.class))).thenReturn(post);
 
@@ -240,7 +240,7 @@ public class PostServiceTest {
     @Test
     @DisplayName("should throw ResourceNotFoundException when tag not found for post creation")
     void shouldThrowResourceNotFoundExceptionWhenTagNotFoundForPostCreation() {
-        CreatePostRequest request = new CreatePostRequest("Test Post", "Test Content", Set.of(1L), Set.of(2L));
+        CreatePostRequest request = new CreatePostRequest("Test Post", "Test Content", 1L, Set.of(2L));
 
         when(postMapper.toEntity(any(CreatePostRequest.class))).thenReturn(post);
 
@@ -252,10 +252,10 @@ public class PostServiceTest {
     @Test
     @DisplayName("should update post successfully")
     void shouldUpdatePostSuccessfully() {
-        UpdatePostRequest request = new UpdatePostRequest("Updated Post", "Updated Content", Set.of(1L), Set.of(1L));
+        UpdatePostRequest request = new UpdatePostRequest("Updated Post", "Updated Content", 1L, Set.of(1L));
 
         when(postRepository.findById(anyLong())).thenReturn(Optional.of(post));
-        when(categoryRepository.findAllById(anySet())).thenReturn(List.of(category));
+        when(categoryRepository.findById(anyLong())).thenReturn(Optional.of(category));
         when(tagRepository.findAllById(anySet())).thenReturn(List.of(tag));
         when(postRepository.save(any(Post.class))).thenReturn(post);
         when(postMapper.toResponse(any(Post.class))).thenReturn(postResponse);
@@ -271,7 +271,7 @@ public class PostServiceTest {
     @Test
     @DisplayName("should throw ResourceNotFoundException when post not found for update")
     void shouldThrowResourceNotFoundExceptionWhenPostNotFoundForUpdate() {
-        UpdatePostRequest request = new UpdatePostRequest("Updated Post", "Updated Content", Set.of(1L), Set.of(1L));
+        UpdatePostRequest request = new UpdatePostRequest("Updated Post", "Updated Content", 1L, Set.of(1L));
 
         when(postRepository.findById(anyLong())).thenReturn(Optional.empty());
 
