@@ -99,7 +99,7 @@ public class UserController {
         return userService.updateUser(id, request);
     }
 
-    @PatchMapping("/{id}/admin")
+    @PatchMapping("/{id}/role/admin")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Make user an admin", description = "Promotes a user to admin role")
@@ -109,7 +109,7 @@ public class UserController {
         userService.updateUserRole(id, RoleType.ADMIN);
     }
 
-    @PatchMapping("/{id}/user")
+    @PatchMapping("/{id}/role/user")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Make user a regular user", description = "Demotes a user to regular user role")
