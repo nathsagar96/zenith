@@ -56,18 +56,6 @@ public class CategoryController {
         return response;
     }
 
-    @GetMapping("/name/{name}")
-    @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Get category by name", description = "Retrieves a category by its name")
-    @ApiResponse(responseCode = "200", description = "Category retrieved successfully")
-    @ApiResponse(responseCode = "404", description = "Category not found")
-    public CategoryResponse getCategoryByName(@PathVariable("name") String name) {
-        log.info("Received request to get category with name: {}", name);
-        CategoryResponse response = categoryService.getCategoryByName(name);
-        log.info("Returning category with name: {}", name);
-        return response;
-    }
-
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('ADMIN')")

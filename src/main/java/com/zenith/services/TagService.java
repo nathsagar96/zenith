@@ -39,14 +39,6 @@ public class TagService {
         return tagMapper.toResponse(tag);
     }
 
-    public TagResponse getTagByName(String name) {
-        log.info("Fetching tag with name: {}", name);
-        Tag tag = tagRepository
-                .findByNameIgnoreCase(name)
-                .orElseThrow(() -> new ResourceNotFoundException("Tag not found with name: " + name));
-        return tagMapper.toResponse(tag);
-    }
-
     @Transactional
     public TagResponse createTag(TagRequest request) {
         log.info("Creating tag with name: {}", request.name());

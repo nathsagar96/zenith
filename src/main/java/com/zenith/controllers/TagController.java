@@ -56,18 +56,6 @@ public class TagController {
         return response;
     }
 
-    @GetMapping("/name/{name}")
-    @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Get tag by name", description = "Retrieves a tag by its name")
-    @ApiResponse(responseCode = "200", description = "Tag retrieved successfully")
-    @ApiResponse(responseCode = "404", description = "Tag not found")
-    public TagResponse getTagByName(@PathVariable("name") String name) {
-        log.info("Received request to get tag with name: {}", name);
-        TagResponse response = tagService.getTagByName(name);
-        log.info("Returning tag with name: {}", name);
-        return response;
-    }
-
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('ADMIN')")

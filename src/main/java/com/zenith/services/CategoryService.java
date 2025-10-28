@@ -40,14 +40,6 @@ public class CategoryService {
         return categoryMapper.toResponse(category);
     }
 
-    public CategoryResponse getCategoryByName(String name) {
-        log.info("Fetching category with name: {}", name);
-        Category category = categoryRepository
-                .findByNameIgnoreCase(name)
-                .orElseThrow(() -> new ResourceNotFoundException("Category not found with name: " + name));
-        return categoryMapper.toResponse(category);
-    }
-
     @Transactional
     public CategoryResponse createCategory(CategoryRequest request) {
         log.info("Creating category with name: {}", request.name());

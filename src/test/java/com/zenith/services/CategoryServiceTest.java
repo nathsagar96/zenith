@@ -98,30 +98,6 @@ public class CategoryServiceTest {
     }
 
     @Test
-    @DisplayName("should get category by name successfully")
-    void shouldGetCategoryByNameSuccessfully() {
-        when(categoryRepository.findByNameIgnoreCase(anyString())).thenReturn(Optional.of(category));
-        when(categoryMapper.toResponse(any(Category.class))).thenReturn(categoryResponse);
-
-        CategoryResponse response = categoryService.getCategoryByName("Test Category");
-
-        assertNotNull(response);
-        assertEquals(categoryResponse, response);
-
-        verify(categoryRepository, times(1)).findByNameIgnoreCase("Test Category");
-    }
-
-    @Test
-    @DisplayName("should throw ResourceNotFoundException when category not found by name")
-    void shouldThrowResourceNotFoundExceptionWhenCategoryNotFoundByName() {
-        when(categoryRepository.findByNameIgnoreCase(anyString())).thenReturn(Optional.empty());
-
-        assertThrows(ResourceNotFoundException.class, () -> categoryService.getCategoryByName("Test Category"));
-
-        verify(categoryRepository, times(1)).findByNameIgnoreCase("Test Category");
-    }
-
-    @Test
     @DisplayName("should create category successfully")
     void shouldCreateCategorySuccessfully() {
         when(categoryRepository.existsByNameIgnoreCase(anyString())).thenReturn(false);

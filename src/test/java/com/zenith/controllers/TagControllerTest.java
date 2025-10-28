@@ -77,16 +77,6 @@ public class TagControllerTest {
     }
 
     @Test
-    @DisplayName("should get tag by name successfully")
-    void shouldGetTagByNameSuccessfully() throws Exception {
-        when(tagService.getTagByName(anyString())).thenReturn(tagResponse);
-
-        mockMvc.perform(get("/api/v1/tags/name/Technology"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("Technology"));
-    }
-
-    @Test
     @DisplayName("should create tag successfully")
     void shouldCreateTagSuccessfully() throws Exception {
         when(tagService.createTag(any(TagRequest.class))).thenReturn(tagResponse);

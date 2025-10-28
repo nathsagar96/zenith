@@ -77,16 +77,6 @@ public class CategoryControllerTest {
     }
 
     @Test
-    @DisplayName("should get category by name successfully")
-    void shouldGetCategoryByNameSuccessfully() throws Exception {
-        when(categoryService.getCategoryByName(anyString())).thenReturn(categoryResponse);
-
-        mockMvc.perform(get("/api/v1/categories/name/Technology"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("Technology"));
-    }
-
-    @Test
     @DisplayName("should create category successfully")
     void shouldCreateCategorySuccessfully() throws Exception {
         when(categoryService.createCategory(any(CategoryRequest.class))).thenReturn(categoryResponse);

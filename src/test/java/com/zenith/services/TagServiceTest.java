@@ -97,30 +97,6 @@ public class TagServiceTest {
     }
 
     @Test
-    @DisplayName("should get tag by name successfully")
-    void shouldGetTagByNameSuccessfully() {
-        when(tagRepository.findByNameIgnoreCase(anyString())).thenReturn(Optional.of(tag));
-        when(tagMapper.toResponse(any(Tag.class))).thenReturn(tagResponse);
-
-        TagResponse response = tagService.getTagByName("Test Tag");
-
-        assertNotNull(response);
-        assertEquals(tagResponse, response);
-
-        verify(tagRepository, times(1)).findByNameIgnoreCase("Test Tag");
-    }
-
-    @Test
-    @DisplayName("should throw ResourceNotFoundException when tag not found by name")
-    void shouldThrowResourceNotFoundExceptionWhenTagNotFoundByName() {
-        when(tagRepository.findByNameIgnoreCase(anyString())).thenReturn(Optional.empty());
-
-        assertThrows(ResourceNotFoundException.class, () -> tagService.getTagByName("Test Tag"));
-
-        verify(tagRepository, times(1)).findByNameIgnoreCase("Test Tag");
-    }
-
-    @Test
     @DisplayName("should create tag successfully")
     void shouldCreateTagSuccessfully() {
         when(tagRepository.existsByNameIgnoreCase(anyString())).thenReturn(false);
