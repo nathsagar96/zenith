@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -18,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/comments")
@@ -35,11 +37,14 @@ public class CommentController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "desc") String direction) {
+        log.info("Received request to get all comments");
         Sort sort = direction.equalsIgnoreCase("asc")
                 ? Sort.by(sortBy).ascending()
                 : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(page, size, sort);
-        return commentService.getAllComments(pageable);
+        PageResponse<CommentResponse> response = commentService.getAllComments(pageable);
+        log.info("Returning {} comments", response.getTotalElements());
+        return response;
     }
 
     @GetMapping("/post/{postId}")
@@ -52,8 +57,11 @@ public class CommentController {
             @PathVariable("postId") Long postId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
+        log.info("Received request to get approved comments for post with id: {}", postId);
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        return commentService.getAllApprovedCommentsByPost(postId, pageable);
+        PageResponse<CommentResponse> response = commentService.getAllApprovedCommentsByPost(postId, pageable);
+        log.info("Returning {} approved comments for post with id: {}", response.getTotalElements(), postId);
+        return response;
     }
 
     @GetMapping("/author/{authorId}/status/{status}")
@@ -68,8 +76,12 @@ public class CommentController {
             @PathVariable("status") String status,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
+        log.info("Received request to get comments for author {} with status {}", authorId, status);
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        return commentService.getAllCommentsByAuthorAndStatus(authorId, status, pageable);
+        PageResponse<CommentResponse> response =
+                commentService.getAllCommentsByAuthorAndStatus(authorId, status, pageable);
+        log.info("Returning {} comments for author {} with status {}", response.getTotalElements(), authorId, status);
+        return response;
     }
 
     @GetMapping("/pending")
@@ -78,8 +90,11 @@ public class CommentController {
     @ApiResponse(responseCode = "200", description = "Comments retrieved successfully")
     public PageResponse<CommentResponse> getAllPendingComments(
             @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        log.info("Received request to get pending comments");
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        return commentService.getAllCommentsByStatus(CommentStatus.PENDING, pageable);
+        PageResponse<CommentResponse> response = commentService.getAllCommentsByStatus(CommentStatus.PENDING, pageable);
+        log.info("Returning {} pending comments", response.getTotalElements());
+        return response;
     }
 
     @GetMapping("/approved")
@@ -88,8 +103,12 @@ public class CommentController {
     @ApiResponse(responseCode = "200", description = "Comments retrieved successfully")
     public PageResponse<CommentResponse> getAllApprovedComments(
             @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        log.info("Received request to get approved comments");
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        return commentService.getAllCommentsByStatus(CommentStatus.APPROVED, pageable);
+        PageResponse<CommentResponse> response =
+                commentService.getAllCommentsByStatus(CommentStatus.APPROVED, pageable);
+        log.info("Returning {} approved comments", response.getTotalElements());
+        return response;
     }
 
     @GetMapping("/spam")
@@ -98,8 +117,11 @@ public class CommentController {
     @ApiResponse(responseCode = "200", description = "Comments retrieved successfully")
     public PageResponse<CommentResponse> getAllSpamComments(
             @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        log.info("Received request to get spam comments");
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        return commentService.getAllCommentsByStatus(CommentStatus.SPAM, pageable);
+        PageResponse<CommentResponse> response = commentService.getAllCommentsByStatus(CommentStatus.SPAM, pageable);
+        log.info("Returning {} spam comments", response.getTotalElements());
+        return response;
     }
 
     @GetMapping("/archived")
@@ -108,8 +130,12 @@ public class CommentController {
     @ApiResponse(responseCode = "200", description = "Comments retrieved successfully")
     public PageResponse<CommentResponse> getAllArchivedComments(
             @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        log.info("Received request to get archived comments");
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        return commentService.getAllCommentsByStatus(CommentStatus.ARCHIVED, pageable);
+        PageResponse<CommentResponse> response =
+                commentService.getAllCommentsByStatus(CommentStatus.ARCHIVED, pageable);
+        log.info("Returning {} archived comments", response.getTotalElements());
+        return response;
     }
 
     @GetMapping("/{id}")
@@ -118,7 +144,10 @@ public class CommentController {
     @ApiResponse(responseCode = "200", description = "Comment retrieved successfully")
     @ApiResponse(responseCode = "404", description = "Comment not found")
     public CommentResponse getCommentById(@PathVariable("id") Long id) {
-        return commentService.getCommentById(id);
+        log.info("Received request to get comment with id: {}", id);
+        CommentResponse response = commentService.getCommentById(id);
+        log.info("Returning comment with id: {}", id);
+        return response;
     }
 
     @PostMapping
@@ -127,7 +156,10 @@ public class CommentController {
     @ApiResponse(responseCode = "201", description = "Comment created successfully")
     @ApiResponse(responseCode = "400", description = "Invalid comment details")
     public CommentResponse createComment(@Valid @RequestBody CreateCommentRequest request) {
-        return commentService.createComment(request);
+        log.info("Received request to create comment for post with id: {}", request.postId());
+        CommentResponse response = commentService.createComment(request);
+        log.info("Comment created successfully with id: {}", response.id());
+        return response;
     }
 
     @PutMapping("/{id}")
@@ -139,7 +171,10 @@ public class CommentController {
     @ApiResponse(responseCode = "404", description = "Comment not found")
     public CommentResponse updateComment(
             @PathVariable("id") Long id, @Valid @RequestBody UpdateCommentRequest request) {
-        return commentService.updateComment(id, request);
+        log.info("Received request to update comment with id: {}", id);
+        CommentResponse response = commentService.updateComment(id, request);
+        log.info("Comment updated successfully with id: {}", id);
+        return response;
     }
 
     @PatchMapping("/{id}/approve")
@@ -149,7 +184,9 @@ public class CommentController {
     @ApiResponse(responseCode = "204", description = "Comment approved successfully")
     @ApiResponse(responseCode = "404", description = "Comment not found")
     public void approveComment(@PathVariable("id") Long id) {
+        log.info("Received request to approve comment with id: {}", id);
         commentService.approveComment(id);
+        log.info("Comment approved successfully with id: {}", id);
     }
 
     @PatchMapping("/{id}/spam")
@@ -159,7 +196,9 @@ public class CommentController {
     @ApiResponse(responseCode = "204", description = "Comment marked as spam successfully")
     @ApiResponse(responseCode = "404", description = "Comment not found")
     public void markSpam(@PathVariable("id") Long id) {
+        log.info("Received request to mark comment as spam with id: {}", id);
         commentService.markSpam(id);
+        log.info("Comment marked as spam successfully with id: {}", id);
     }
 
     @DeleteMapping("/{id}")
@@ -169,6 +208,8 @@ public class CommentController {
     @ApiResponse(responseCode = "204", description = "Comment archived successfully")
     @ApiResponse(responseCode = "404", description = "Comment not found")
     public void archiveComment(@PathVariable("id") Long id) {
+        log.info("Received request to archive comment with id: {}", id);
         commentService.archiveComment(id);
+        log.info("Comment archived successfully with id: {}", id);
     }
 }

@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -16,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/categories")
@@ -32,11 +34,14 @@ public class CategoryController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "desc") String direction) {
+        log.info("Received request to get all categories");
         Sort sort = direction.equalsIgnoreCase("asc")
                 ? Sort.by(sortBy).ascending()
                 : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(page, size, sort);
-        return categoryService.getAllCategories(pageable);
+        PageResponse<CategoryResponse> response = categoryService.getAllCategories(pageable);
+        log.info("Returning {} categories", response.getTotalElements());
+        return response;
     }
 
     @GetMapping("/{id}")
@@ -45,7 +50,10 @@ public class CategoryController {
     @ApiResponse(responseCode = "200", description = "Category retrieved successfully")
     @ApiResponse(responseCode = "404", description = "Category not found")
     public CategoryResponse getCategoryById(@PathVariable("id") Long id) {
-        return categoryService.getCategoryById(id);
+        log.info("Received request to get category with id: {}", id);
+        CategoryResponse response = categoryService.getCategoryById(id);
+        log.info("Returning category with id: {}", id);
+        return response;
     }
 
     @GetMapping("/name/{name}")
@@ -54,7 +62,10 @@ public class CategoryController {
     @ApiResponse(responseCode = "200", description = "Category retrieved successfully")
     @ApiResponse(responseCode = "404", description = "Category not found")
     public CategoryResponse getCategoryByName(@PathVariable("name") String name) {
-        return categoryService.getCategoryByName(name);
+        log.info("Received request to get category with name: {}", name);
+        CategoryResponse response = categoryService.getCategoryByName(name);
+        log.info("Returning category with name: {}", name);
+        return response;
     }
 
     @PostMapping
@@ -64,7 +75,10 @@ public class CategoryController {
     @ApiResponse(responseCode = "201", description = "Category created successfully")
     @ApiResponse(responseCode = "400", description = "Invalid category details")
     public CategoryResponse createCategory(@Valid @RequestBody CategoryRequest request) {
-        return categoryService.createCategory(request);
+        log.info("Received request to create category with name: {}", request.name());
+        CategoryResponse response = categoryService.createCategory(request);
+        log.info("Category created successfully with id: {}", response.id());
+        return response;
     }
 
     @PutMapping("/{id}")
@@ -75,7 +89,10 @@ public class CategoryController {
     @ApiResponse(responseCode = "400", description = "Invalid category details")
     @ApiResponse(responseCode = "404", description = "Category not found")
     public CategoryResponse updateCategory(@PathVariable("id") Long id, @Valid @RequestBody CategoryRequest request) {
-        return categoryService.updateCategory(id, request);
+        log.info("Received request to update category with id: {}", id);
+        CategoryResponse response = categoryService.updateCategory(id, request);
+        log.info("Category updated successfully with id: {}", id);
+        return response;
     }
 
     @DeleteMapping("/{id}")
@@ -85,6 +102,8 @@ public class CategoryController {
     @ApiResponse(responseCode = "204", description = "Category deleted successfully")
     @ApiResponse(responseCode = "404", description = "Category not found")
     public void deleteCategory(@PathVariable("id") Long id) {
+        log.info("Received request to delete category with id: {}", id);
         categoryService.deleteCategory(id);
+        log.info("Category deleted successfully with id: {}", id);
     }
 }

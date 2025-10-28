@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -18,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/users")
@@ -35,11 +37,14 @@ public class UserController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "desc") String direction) {
+        log.info("Received request to get all users");
         Sort sort = direction.equalsIgnoreCase("asc")
                 ? Sort.by(sortBy).ascending()
                 : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(page, size, sort);
-        return userService.getAllUser(pageable);
+        PageResponse<UserResponse> response = userService.getAllUser(pageable);
+        log.info("Returning {} users", response.getTotalElements());
+        return response;
     }
 
     @GetMapping("/role/{role}")
@@ -53,12 +58,15 @@ public class UserController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "desc") String direction) {
+        log.info("Received request to get users with role: {}", role);
         Sort sort = direction.equalsIgnoreCase("asc")
                 ? Sort.by(sortBy).ascending()
                 : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(page, size, sort);
 
-        return userService.getAllUserByRole(role, pageable);
+        PageResponse<UserResponse> response = userService.getAllUserByRole(role, pageable);
+        log.info("Returning {} users with role: {}", response.getTotalElements(), role);
+        return response;
     }
 
     @GetMapping("/{id}")
@@ -67,7 +75,10 @@ public class UserController {
     @ApiResponse(responseCode = "200", description = "User retrieved successfully")
     @ApiResponse(responseCode = "404", description = "User not found")
     public UserResponse getUserById(@PathVariable("id") Long id) {
-        return userService.getUserById(id);
+        log.info("Received request to get user with id: {}", id);
+        UserResponse response = userService.getUserById(id);
+        log.info("Returning user with id: {}", id);
+        return response;
     }
 
     @GetMapping("/email/{email}")
@@ -76,7 +87,10 @@ public class UserController {
     @ApiResponse(responseCode = "200", description = "User retrieved successfully")
     @ApiResponse(responseCode = "404", description = "User not found")
     public UserResponse getUserByEmail(@PathVariable("email") String email) {
-        return userService.getUserByEmail(email);
+        log.info("Received request to get user with email: {}", email);
+        UserResponse response = userService.getUserByEmail(email);
+        log.info("Returning user with email: {}", email);
+        return response;
     }
 
     @PostMapping
@@ -86,7 +100,10 @@ public class UserController {
     @ApiResponse(responseCode = "201", description = "User created successfully")
     @ApiResponse(responseCode = "400", description = "Invalid user details")
     public UserResponse createUser(@Valid @RequestBody CreateUserRequest request) {
-        return userService.createUser(request);
+        log.info("Received request to create user with username: {}", request.username());
+        UserResponse response = userService.createUser(request);
+        log.info("User created successfully with id: {}", response.id());
+        return response;
     }
 
     @PutMapping("/{id}")
@@ -96,7 +113,10 @@ public class UserController {
     @ApiResponse(responseCode = "400", description = "Invalid user details")
     @ApiResponse(responseCode = "404", description = "User not found")
     public UserResponse updateUser(@PathVariable("id") Long id, @Valid @RequestBody UpdateUserRequest request) {
-        return userService.updateUser(id, request);
+        log.info("Received request to update user with id: {}", id);
+        UserResponse response = userService.updateUser(id, request);
+        log.info("User updated successfully with id: {}", id);
+        return response;
     }
 
     @PatchMapping("/{id}/role/admin")
@@ -106,7 +126,9 @@ public class UserController {
     @ApiResponse(responseCode = "204", description = "User promoted to admin successfully")
     @ApiResponse(responseCode = "404", description = "User not found")
     public void makeAdmin(@PathVariable("id") Long id) {
+        log.info("Received request to make user with id: {} an admin", id);
         userService.updateUserRole(id, RoleType.ADMIN);
+        log.info("User with id: {} promoted to admin successfully", id);
     }
 
     @PatchMapping("/{id}/role/user")
@@ -116,7 +138,9 @@ public class UserController {
     @ApiResponse(responseCode = "204", description = "User demoted to regular user successfully")
     @ApiResponse(responseCode = "404", description = "User not found")
     public void makeUser(@PathVariable("id") Long id) {
+        log.info("Received request to make user with id: {} a regular user", id);
         userService.updateUserRole(id, RoleType.USER);
+        log.info("User with id: {} demoted to regular user successfully", id);
     }
 
     @DeleteMapping("/{id}")
@@ -126,6 +150,8 @@ public class UserController {
     @ApiResponse(responseCode = "204", description = "User deleted successfully")
     @ApiResponse(responseCode = "404", description = "User not found")
     public void deleteUser(@PathVariable("id") Long id) {
+        log.info("Received request to delete user with id: {}", id);
         userService.deleteUser(id);
+        log.info("User deleted successfully with id: {}", id);
     }
 }

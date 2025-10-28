@@ -9,9 +9,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/auth")
@@ -25,7 +27,10 @@ public class AuthController {
     @ApiResponse(responseCode = "201", description = "User registered successfully")
     @ApiResponse(responseCode = "400", description = "Invalid registration details")
     public AuthResponse register(@Valid @RequestBody RegisterRequest request) {
-        return authService.register(request);
+        log.info("Received registration request for username: {}", request.username());
+        AuthResponse response = authService.register(request);
+        log.info("User registered successfully with username: {}", request.username());
+        return response;
     }
 
     @PostMapping("/login")
@@ -34,6 +39,9 @@ public class AuthController {
     @ApiResponse(responseCode = "200", description = "Login successful")
     @ApiResponse(responseCode = "401", description = "Invalid credentials")
     public AuthResponse login(@Valid @RequestBody LoginRequest request) {
-        return authService.login(request);
+        log.info("Received login request");
+        AuthResponse response = authService.login(request);
+        log.info("User logged in successfully");
+        return response;
     }
 }

@@ -18,13 +18,15 @@ import com.zenith.utils.SlugUtils;
 import java.util.HashSet;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class PostService {
     private final PostRepository postRepository;
     private final PostMapper postMapper;
@@ -33,6 +35,7 @@ public class PostService {
     private final UserService userService;
 
     public PageResponse<PostResponse> getAllPosts(Pageable pageable) {
+        log.info("Fetching all posts");
         var posts = postRepository.findAll(pageable);
         return new PageResponse<>(
                 posts.getNumber(),
@@ -43,6 +46,7 @@ public class PostService {
     }
 
     public PageResponse<PostResponse> getAllPublishedPosts(Pageable pageable) {
+        log.info("Fetching all published posts");
         var posts = postRepository.findByStatus(PostStatus.PUBLISHED, pageable);
         return new PageResponse<>(
                 posts.getNumber(),
@@ -53,6 +57,7 @@ public class PostService {
     }
 
     public PageResponse<PostResponse> getAllPublishedPostsByAuthor(Long authorId, Pageable pageable) {
+        log.info("Fetching published posts for author with id: {}", authorId);
         var posts = postRepository.findByAuthorIdAndStatus(authorId, PostStatus.PUBLISHED, pageable);
         return new PageResponse<>(
                 posts.getNumber(),
@@ -64,10 +69,12 @@ public class PostService {
 
     public PageResponse<PostResponse> getAllPostsByStatus(PostStatus status, Pageable pageable) {
         Long currentUserId = userService.getCurrentUser().getId();
+        log.info("Fetching posts for user {} with status {}", currentUserId, status);
         return getAllPostsByAuthorAndStatus(currentUserId, String.valueOf(status), pageable);
     }
 
     public PageResponse<PostResponse> getAllPostsByAuthorAndStatus(Long authorId, String status, Pageable pageable) {
+        log.info("Fetching posts for author {} with status {}", authorId, status);
         var postStatus = PostStatus.valueOf(status);
         var posts = postRepository.findByAuthorIdAndStatus(authorId, postStatus, pageable);
         return new PageResponse<>(
@@ -79,8 +86,10 @@ public class PostService {
     }
 
     public PostResponse getPostById(Long id) {
+        log.info("Fetching post with id: {}", id);
         Post post = findById(id);
         if (post.getStatus() != PostStatus.PUBLISHED) {
+            log.warn("Post not found or not published with id: {}", id);
             throw new ResourceNotFoundException("Post not found with id: " + id);
         }
         return postMapper.toResponse(post);
@@ -88,6 +97,8 @@ public class PostService {
 
     @Transactional
     public PostResponse createPost(CreatePostRequest request) {
+        log.info("Creating post with title: {}", request.title());
+
         User author = userService.getCurrentUser();
 
         Post newPost = postMapper.toEntity(request);
@@ -114,12 +125,15 @@ public class PostService {
         newPost.setSlug(slug);
 
         Post createdPost = postRepository.save(newPost);
+        log.info("Post created successfully with id: {}", createdPost.getId());
 
         return postMapper.toResponse(createdPost);
     }
 
     @Transactional
     public PostResponse updatePost(Long id, UpdatePostRequest request) {
+        log.info("Updating post with id: {}", id);
+
         Post existingPost = findById(id);
 
         if (request.title() != null && !request.title().isBlank()) {
@@ -154,21 +168,28 @@ public class PostService {
         }
 
         Post updatedPost = postRepository.save(existingPost);
+        log.info("Post updated successfully with id: {}", updatedPost.getId());
         return postMapper.toResponse(updatedPost);
     }
 
     @Transactional
     public void publishPost(Long id) {
+        log.info("Publishing post with id: {}", id);
+
         Post post = findById(id);
         post.setStatus(PostStatus.PUBLISHED);
         postRepository.save(post);
+        log.info("Post published successfully with id: {}", id);
     }
 
     @Transactional
     public void archivePost(Long id) {
+        log.info("Archiving post with id: {}", id);
+
         Post post = findById(id);
         post.setStatus(PostStatus.ARCHIVED);
         postRepository.save(post);
+        log.info("Post archived successfully with id: {}", id);
     }
 
     private Post findById(Long id) {

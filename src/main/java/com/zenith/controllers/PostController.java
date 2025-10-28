@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -18,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/posts")
@@ -35,11 +37,14 @@ public class PostController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "desc") String direction) {
+        log.info("Received request to get all posts");
         Sort sort = direction.equalsIgnoreCase("asc")
                 ? Sort.by(sortBy).ascending()
                 : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(page, size, sort);
-        return postService.getAllPosts(pageable);
+        PageResponse<PostResponse> response = postService.getAllPosts(pageable);
+        log.info("Returning {} posts", response.getTotalElements());
+        return response;
     }
 
     @GetMapping("/public")
@@ -51,11 +56,14 @@ public class PostController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "desc") String direction) {
+        log.info("Received request to get all public posts");
         Sort sort = direction.equalsIgnoreCase("asc")
                 ? Sort.by(sortBy).ascending()
                 : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(page, size, sort);
-        return postService.getAllPublishedPosts(pageable);
+        PageResponse<PostResponse> response = postService.getAllPublishedPosts(pageable);
+        log.info("Returning {} public posts", response.getTotalElements());
+        return response;
     }
 
     @GetMapping("/author/{authorId}")
@@ -70,11 +78,14 @@ public class PostController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "desc") String direction) {
+        log.info("Received request to get public posts for author with id: {}", authorId);
         Sort sort = direction.equalsIgnoreCase("asc")
                 ? Sort.by(sortBy).ascending()
                 : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(page, size, sort);
-        return postService.getAllPublishedPostsByAuthor(authorId, pageable);
+        PageResponse<PostResponse> response = postService.getAllPublishedPostsByAuthor(authorId, pageable);
+        log.info("Returning {} public posts for author with id: {}", response.getTotalElements(), authorId);
+        return response;
     }
 
     @GetMapping("/author/{authorId}/status/{status}")
@@ -91,11 +102,14 @@ public class PostController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "desc") String direction) {
+        log.info("Received request to get posts for author {} with status {}", authorId, status);
         Sort sort = direction.equalsIgnoreCase("asc")
                 ? Sort.by(sortBy).ascending()
                 : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(page, size, sort);
-        return postService.getAllPostsByAuthorAndStatus(authorId, status, pageable);
+        PageResponse<PostResponse> response = postService.getAllPostsByAuthorAndStatus(authorId, status, pageable);
+        log.info("Returning {} posts for author {} with status {}", response.getTotalElements(), authorId, status);
+        return response;
     }
 
     @GetMapping("/drafts")
@@ -107,11 +121,14 @@ public class PostController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "desc") String direction) {
+        log.info("Received request to get draft posts");
         Sort sort = direction.equalsIgnoreCase("asc")
                 ? Sort.by(sortBy).ascending()
                 : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(page, size, sort);
-        return postService.getAllPostsByStatus(PostStatus.DRAFT, pageable);
+        PageResponse<PostResponse> response = postService.getAllPostsByStatus(PostStatus.DRAFT, pageable);
+        log.info("Returning {} draft posts", response.getTotalPages());
+        return response;
     }
 
     @GetMapping("/published")
@@ -123,11 +140,14 @@ public class PostController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "desc") String direction) {
+        log.info("Received request to get published posts");
         Sort sort = direction.equalsIgnoreCase("asc")
                 ? Sort.by(sortBy).ascending()
                 : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(page, size, sort);
-        return postService.getAllPostsByStatus(PostStatus.PUBLISHED, pageable);
+        PageResponse<PostResponse> response = postService.getAllPostsByStatus(PostStatus.PUBLISHED, pageable);
+        log.info("Returning {} published posts", response.getTotalElements());
+        return response;
     }
 
     @GetMapping("/archived")
@@ -139,11 +159,14 @@ public class PostController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "desc") String direction) {
+        log.info("Received request to get archived posts");
         Sort sort = direction.equalsIgnoreCase("asc")
                 ? Sort.by(sortBy).ascending()
                 : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(page, size, sort);
-        return postService.getAllPostsByStatus(PostStatus.ARCHIVED, pageable);
+        PageResponse<PostResponse> response = postService.getAllPostsByStatus(PostStatus.ARCHIVED, pageable);
+        log.info("Returning {} archived posts", response.getTotalElements());
+        return response;
     }
 
     @GetMapping("/{id}")
@@ -152,7 +175,10 @@ public class PostController {
     @ApiResponse(responseCode = "200", description = "Post retrieved successfully")
     @ApiResponse(responseCode = "404", description = "Post not found")
     public PostResponse getPostById(@PathVariable("id") Long id) {
-        return postService.getPostById(id);
+        log.info("Received request to get post with id: {}", id);
+        PostResponse response = postService.getPostById(id);
+        log.info("Returning post with id: {}", id);
+        return response;
     }
 
     @PostMapping
@@ -161,7 +187,10 @@ public class PostController {
     @ApiResponse(responseCode = "201", description = "Post created successfully")
     @ApiResponse(responseCode = "400", description = "Invalid post details")
     public PostResponse createPost(@Valid @RequestBody CreatePostRequest request) {
-        return postService.createPost(request);
+        log.info("Received request to create post with title: {}", request.title());
+        PostResponse response = postService.createPost(request);
+        log.info("Post created successfully with id: {}", response.id());
+        return response;
     }
 
     @PutMapping("/{id}")
@@ -172,7 +201,10 @@ public class PostController {
     @ApiResponse(responseCode = "400", description = "Invalid post details")
     @ApiResponse(responseCode = "404", description = "Post not found")
     public PostResponse updatePost(@PathVariable("id") Long id, @Valid @RequestBody UpdatePostRequest request) {
-        return postService.updatePost(id, request);
+        log.info("Received request to update post with id: {}", id);
+        PostResponse response = postService.updatePost(id, request);
+        log.info("Post updated successfully with id: {}", id);
+        return response;
     }
 
     @PatchMapping("/{id}/publish")
@@ -182,7 +214,9 @@ public class PostController {
     @ApiResponse(responseCode = "204", description = "Post published successfully")
     @ApiResponse(responseCode = "404", description = "Post not found")
     public void publishPost(@PathVariable("id") Long id) {
+        log.info("Received request to publish post with id: {}", id);
         postService.publishPost(id);
+        log.info("Post published successfully with id: {}", id);
     }
 
     @DeleteMapping("/{id}")
@@ -192,6 +226,8 @@ public class PostController {
     @ApiResponse(responseCode = "204", description = "Post archived successfully")
     @ApiResponse(responseCode = "404", description = "Post not found")
     public void archivePost(@PathVariable("id") Long id) {
+        log.info("Received request to archive post with id: {}", id);
         postService.archivePost(id);
+        log.info("Post archived successfully with id: {}", id);
     }
 }
