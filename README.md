@@ -13,6 +13,7 @@ Zenith is a comprehensive blog application built with Spring Boot that provides 
 - **Security**: JWT-based authentication and authorization
 - **Data Validation**: Comprehensive input validation
 - **Containerization**: Docker Compose support for easy deployment
+- **Automated Cleanup**: Scheduled job for deleting old archived content
 
 ## Technologies Used
 
@@ -312,6 +313,34 @@ Replace `your-image-name` with the actual name of the generated image, add sprin
 - **Performance**: Optimized for fast startup and low memory footprint
 
 For more details on customizing the build process, refer to the [Spring Boot documentation](https://docs.spring.io/spring-boot/maven-plugin/build-image.html#build-image).
+
+## Archive Cleanup Job
+
+The application includes an automated cleanup job that runs daily at midnight to maintain database health and performance by removing old archived content.
+
+### Purpose
+
+The archive cleanup job automatically deletes:
+
+- Archived posts that are older than 30 days
+- Archived comments that are older than 30 days
+
+This helps to:
+
+- Keep the database clean and performant
+- Remove unnecessary data that is no longer needed
+- Maintain system efficiency
+
+### Scheduling Details
+
+- **Frequency**: Daily at midnight (00:00)
+- **Implementation**: Spring Boot's `@Scheduled` annotation with cron expression
+
+### Technical Implementation
+
+- Uses JPQL queries for efficient bulk deletion
+- Includes transaction management with `@Transactional`
+- Provides basic logging for monitoring the cleanup process
 
 ## Contributing
 
