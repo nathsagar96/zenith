@@ -2,7 +2,6 @@ package com.zenith.controllers;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -130,8 +129,7 @@ public class UserControllerTest {
 
         mockMvc.perform(post("/api/v1/users")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(createUserRequest))
-                        .with(csrf()))
+                        .content(objectMapper.writeValueAsString(createUserRequest)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.username").value("testuser"));
     }
@@ -143,8 +141,7 @@ public class UserControllerTest {
 
         mockMvc.perform(put("/api/v1/users/1")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updateUserRequest))
-                        .with(csrf()))
+                        .content(objectMapper.writeValueAsString(updateUserRequest)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.username").value("testuser"));
     }
@@ -153,20 +150,20 @@ public class UserControllerTest {
     @DisplayName("should make user admin successfully")
     @WithMockUser(roles = "ADMIN")
     void shouldMakeUserAdminSuccessfully() throws Exception {
-        mockMvc.perform(patch("/api/v1/users/1/admin").with(csrf())).andExpect(status().isNoContent());
+        mockMvc.perform(patch("/api/v1/users/1/role/admin")).andExpect(status().isNoContent());
     }
 
     @Test
     @DisplayName("should make user regular user successfully")
     @WithMockUser(roles = "ADMIN")
     void shouldMakeUserRegularUserSuccessfully() throws Exception {
-        mockMvc.perform(patch("/api/v1/users/1/user").with(csrf())).andExpect(status().isNoContent());
+        mockMvc.perform(patch("/api/v1/users/1/role/user")).andExpect(status().isNoContent());
     }
 
     @Test
     @DisplayName("should delete user successfully")
     @WithMockUser(roles = "ADMIN")
     void shouldDeleteUserSuccessfully() throws Exception {
-        mockMvc.perform(delete("/api/v1/users/1").with(csrf())).andExpect(status().isNoContent());
+        mockMvc.perform(delete("/api/v1/users/1")).andExpect(status().isNoContent());
     }
 }
