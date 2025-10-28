@@ -10,6 +10,7 @@ import com.zenith.dtos.requests.CreateUserRequest;
 import com.zenith.dtos.requests.UpdateUserRequest;
 import com.zenith.dtos.responses.PageResponse;
 import com.zenith.dtos.responses.UserResponse;
+import com.zenith.enums.RoleType;
 import com.zenith.security.JwtService;
 import com.zenith.services.UserService;
 import java.time.LocalDateTime;
@@ -22,8 +23,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -76,7 +79,8 @@ public class UserControllerTest {
     @Test
     @DisplayName("should get all users successfully")
     void shouldGetAllUsersSuccessfully() throws Exception {
-        when(userService.getAllUser(any())).thenReturn(pageResponse);
+        PageRequest request = PageRequest.of(0, 10, Sort.by("createdAt").descending());
+        when(userService.getAllUsers(null, request)).thenReturn(pageResponse);
 
         mockMvc.perform(get("/api/v1/users")
                         .param("page", "0")
@@ -90,13 +94,14 @@ public class UserControllerTest {
     @Test
     @DisplayName("should get users by role successfully")
     void shouldGetUsersByRoleSuccessfully() throws Exception {
-        when(userService.getAllUserByRole(anyString(), any())).thenReturn(pageResponse);
+        when(userService.getAllUsers(any(RoleType.class), any(Pageable.class))).thenReturn(pageResponse);
 
-        mockMvc.perform(get("/api/v1/users/role/USER")
+        mockMvc.perform(get("/api/v1/users")
                         .param("page", "0")
                         .param("size", "10")
                         .param("sortBy", "createdAt")
-                        .param("direction", "desc"))
+                        .param("direction", "desc")
+                        .param("role", "USER"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].username").value("testuser"));
     }
@@ -112,18 +117,7 @@ public class UserControllerTest {
     }
 
     @Test
-    @DisplayName("should get user by email successfully")
-    void shouldGetUserByEmailSuccessfully() throws Exception {
-        when(userService.getUserByEmail(anyString())).thenReturn(userResponse);
-
-        mockMvc.perform(get("/api/v1/users/email/test@example.com"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.username").value("testuser"));
-    }
-
-    @Test
     @DisplayName("should create user successfully")
-    @WithMockUser(roles = "ADMIN")
     void shouldCreateUserSuccessfully() throws Exception {
         when(userService.createUser(any(CreateUserRequest.class))).thenReturn(userResponse);
 
@@ -147,22 +141,15 @@ public class UserControllerTest {
     }
 
     @Test
-    @DisplayName("should make user admin successfully")
-    @WithMockUser(roles = "ADMIN")
-    void shouldMakeUserAdminSuccessfully() throws Exception {
-        mockMvc.perform(patch("/api/v1/users/1/role/admin")).andExpect(status().isNoContent());
-    }
+    @DisplayName("should update user role successfully")
+    void shouldUpdateUserRoleSuccessfully() throws Exception {
+        mockMvc.perform(patch("/api/v1/users/1/role").param("role", "ADMIN")).andExpect(status().isNoContent());
 
-    @Test
-    @DisplayName("should make user regular user successfully")
-    @WithMockUser(roles = "ADMIN")
-    void shouldMakeUserRegularUserSuccessfully() throws Exception {
-        mockMvc.perform(patch("/api/v1/users/1/role/user")).andExpect(status().isNoContent());
+        mockMvc.perform(patch("/api/v1/users/1/role").param("role", "USER")).andExpect(status().isNoContent());
     }
 
     @Test
     @DisplayName("should delete user successfully")
-    @WithMockUser(roles = "ADMIN")
     void shouldDeleteUserSuccessfully() throws Exception {
         mockMvc.perform(delete("/api/v1/users/1")).andExpect(status().isNoContent());
     }

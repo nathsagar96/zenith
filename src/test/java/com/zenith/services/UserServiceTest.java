@@ -88,7 +88,7 @@ public class UserServiceTest {
         when(userRepository.findAll(any(Pageable.class))).thenReturn(userPage);
         when(userMapper.toResponse(any(User.class))).thenReturn(userResponse);
 
-        PageResponse<UserResponse> response = userService.getAllUser(pageable);
+        PageResponse<UserResponse> response = userService.getAllUsers(null, pageable);
 
         assertNotNull(response);
         assertEquals(1, response.getTotalElements());
@@ -108,7 +108,7 @@ public class UserServiceTest {
                 .thenReturn(userPage);
         when(userMapper.toResponse(any(User.class))).thenReturn(userResponse);
 
-        PageResponse<UserResponse> response = userService.getAllUserByRole("USER", pageable);
+        PageResponse<UserResponse> response = userService.getAllUsers(RoleType.USER, pageable);
 
         assertNotNull(response);
         assertEquals(1, response.getTotalElements());
@@ -140,30 +140,6 @@ public class UserServiceTest {
         assertThrows(ResourceNotFoundException.class, () -> userService.getUserById(1L));
 
         verify(userRepository, times(1)).findById(1L);
-    }
-
-    @Test
-    @DisplayName("should get user by email successfully")
-    void shouldGetUserByEmailSuccessfully() {
-        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
-        when(userMapper.toResponse(any(User.class))).thenReturn(userResponse);
-
-        UserResponse response = userService.getUserByEmail("test@example.com");
-
-        assertNotNull(response);
-        assertEquals(userResponse, response);
-
-        verify(userRepository, times(1)).findByEmail("test@example.com");
-    }
-
-    @Test
-    @DisplayName("should throw ResourceNotFoundException when user not found by email")
-    void shouldThrowResourceNotFoundExceptionWhenUserNotFoundByEmail() {
-        when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
-
-        assertThrows(ResourceNotFoundException.class, () -> userService.getUserByEmail("test@example.com"));
-
-        verify(userRepository, times(1)).findByEmail("test@example.com");
     }
 
     @Test

@@ -30,42 +30,24 @@ public class UserController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Get all users", description = "Retrieves a paginated list of all users")
+    @Operation(
+            summary = "Get all users",
+            description =
+                    "Retrieves a paginated list of all users. Can be filtered by role using the role query parameter.")
     @ApiResponse(responseCode = "200", description = "Users retrieved successfully")
     public PageResponse<UserResponse> getAllUsers(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
-            @RequestParam(defaultValue = "desc") String direction) {
-        log.info("Received request to get all users");
+            @RequestParam(defaultValue = "desc") String direction,
+            @RequestParam(required = false) RoleType role) {
+        log.info("Received request to get all users" + (role != null ? " with role: " + role : ""));
         Sort sort = direction.equalsIgnoreCase("asc")
                 ? Sort.by(sortBy).ascending()
                 : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(page, size, sort);
-        PageResponse<UserResponse> response = userService.getAllUser(pageable);
-        log.info("Returning {} users", response.getTotalElements());
-        return response;
-    }
-
-    @GetMapping("/role/{role}")
-    @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Get users by role", description = "Retrieves a paginated list of users by role")
-    @ApiResponse(responseCode = "200", description = "Users retrieved successfully")
-    public PageResponse<UserResponse> getAllUsersByRole(
-            @PathVariable("role") String role,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "createdAt") String sortBy,
-            @RequestParam(defaultValue = "desc") String direction) {
-        log.info("Received request to get users with role: {}", role);
-        Sort sort = direction.equalsIgnoreCase("asc")
-                ? Sort.by(sortBy).ascending()
-                : Sort.by(sortBy).descending();
-        Pageable pageable = PageRequest.of(page, size, sort);
-
-        PageResponse<UserResponse> response = userService.getAllUserByRole(role, pageable);
-        log.info("Returning {} users with role: {}", response.getTotalElements(), role);
+        PageResponse<UserResponse> response = userService.getAllUsers(role, pageable);
+        log.info("Returning {} users" + (role != null ? " with role: " + role : ""), response.getTotalElements());
         return response;
     }
 
@@ -78,18 +60,6 @@ public class UserController {
         log.info("Received request to get user with id: {}", id);
         UserResponse response = userService.getUserById(id);
         log.info("Returning user with id: {}", id);
-        return response;
-    }
-
-    @GetMapping("/email/{email}")
-    @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Get user by email", description = "Retrieves a user by their email")
-    @ApiResponse(responseCode = "200", description = "User retrieved successfully")
-    @ApiResponse(responseCode = "404", description = "User not found")
-    public UserResponse getUserByEmail(@PathVariable("email") String email) {
-        log.info("Received request to get user with email: {}", email);
-        UserResponse response = userService.getUserByEmail(email);
-        log.info("Returning user with email: {}", email);
         return response;
     }
 
@@ -119,28 +89,17 @@ public class UserController {
         return response;
     }
 
-    @PatchMapping("/{id}/role/admin")
+    @PatchMapping("/{id}/role")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Make user an admin", description = "Promotes a user to admin role")
-    @ApiResponse(responseCode = "204", description = "User promoted to admin successfully")
+    @Operation(summary = "Update user role", description = "Updates a user's role to the specified role")
+    @ApiResponse(responseCode = "204", description = "User role updated successfully")
+    @ApiResponse(responseCode = "400", description = "Invalid role specified")
     @ApiResponse(responseCode = "404", description = "User not found")
-    public void makeAdmin(@PathVariable("id") Long id) {
-        log.info("Received request to make user with id: {} an admin", id);
-        userService.updateUserRole(id, RoleType.ADMIN);
-        log.info("User with id: {} promoted to admin successfully", id);
-    }
-
-    @PatchMapping("/{id}/role/user")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Make user a regular user", description = "Demotes a user to regular user role")
-    @ApiResponse(responseCode = "204", description = "User demoted to regular user successfully")
-    @ApiResponse(responseCode = "404", description = "User not found")
-    public void makeUser(@PathVariable("id") Long id) {
-        log.info("Received request to make user with id: {} a regular user", id);
-        userService.updateUserRole(id, RoleType.USER);
-        log.info("User with id: {} demoted to regular user successfully", id);
+    public void updateUserRole(@PathVariable("id") Long id, @RequestParam("role") RoleType role) {
+        log.info("Received request to update user with id: {} to role: {}", id, role);
+        userService.updateUserRole(id, role);
+        log.info("User with id: {} role updated to {} successfully", id, role);
     }
 
     @DeleteMapping("/{id}")

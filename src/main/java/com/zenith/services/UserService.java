@@ -14,6 +14,7 @@ import com.zenith.mappers.UserMapper;
 import com.zenith.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -30,21 +31,17 @@ public class UserService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
 
-    public PageResponse<UserResponse> getAllUser(Pageable pageable) {
-        log.info("Fetching all users");
-        var users = userRepository.findAll(pageable);
-        return new PageResponse<>(
-                users.getNumber(),
-                users.getSize(),
-                users.getTotalElements(),
-                users.getTotalPages(),
-                users.stream().map(userMapper::toResponse).toList());
-    }
+    public PageResponse<UserResponse> getAllUsers(RoleType role, Pageable pageable) {
+        Page<User> users;
 
-    public PageResponse<UserResponse> getAllUserByRole(String role, Pageable pageable) {
-        log.info("Fetching users with role: {}", role);
-        RoleType roleType = RoleType.valueOf(role);
-        var users = userRepository.findByRole(roleType, pageable);
+        if (role != null) {
+            log.info("Fetching users with role: {}", role);
+            users = userRepository.findByRole(role, pageable);
+        } else {
+            log.info("Fetching all users");
+            users = userRepository.findAll(pageable);
+        }
+
         return new PageResponse<>(
                 users.getNumber(),
                 users.getSize(),
@@ -56,14 +53,6 @@ public class UserService {
     public UserResponse getUserById(long id) {
         log.info("Fetching user with id: {}", id);
         User user = findById(id);
-        return userMapper.toResponse(user);
-    }
-
-    public UserResponse getUserByEmail(String email) {
-        log.info("Fetching user with email: {}", email);
-        User user = userRepository
-                .findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with email:" + email));
         return userMapper.toResponse(user);
     }
 
