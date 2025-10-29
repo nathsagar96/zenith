@@ -1,5 +1,6 @@
 package com.zenith.configs;
 
+import com.zenith.enums.RoleType;
 import com.zenith.security.JwtAuthFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -28,26 +29,23 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(requests -> requests.requestMatchers("/api/v1/auth/**")
-                        .permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/categories", "/api/v1/categories/**")
-                        .permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/tags", "/api/v1/tags/**")
-                        .permitAll()
-                        .requestMatchers(
-                                HttpMethod.GET,
-                                "/api/v1/posts/public",
-                                "/api/v1/posts/author/{authorId}",
-                                "/api/v1/posts/{id}")
-                        .permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/comments/post/{postId}", "/api/v1/comments/{id}")
-                        .permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/users/**")
-                        .permitAll()
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs*/**", "/swagger-ui.html")
-                        .permitAll()
-                        .anyRequest()
-                        .authenticated())
+                .authorizeHttpRequests(
+                        requests -> requests.requestMatchers("/swagger-ui/**", "/v3/api-docs*/**", "/swagger-ui.html")
+                                .permitAll()
+                                .requestMatchers("/api/v1/auth/**")
+                                .permitAll()
+                                .requestMatchers(
+                                        HttpMethod.GET,
+                                        "/api/v1/categories/**",
+                                        "/api/v1/tags/**",
+                                        "/api/v1/posts/**",
+                                        "/api/v1/comments/**",
+                                        "/api/v1/users")
+                                .permitAll()
+                                .requestMatchers("/api/v1/admin/**")
+                                .hasRole(RoleType.ADMIN.name())
+                                .anyRequest()
+                                .authenticated())
                 .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
