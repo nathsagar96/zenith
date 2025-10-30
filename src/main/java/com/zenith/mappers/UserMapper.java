@@ -17,6 +17,7 @@ public interface UserMapper {
     @Mapping(target = "comments", ignore = true)
     User toEntity(CreateUserRequest request);
 
+    @Mapping(source = "id", target = "userId")
     @Mapping(source = "posts", target = "postCount", qualifiedByName = "postCount")
     @Mapping(source = "comments", target = "commentCount", qualifiedByName = "commentCount")
     UserResponse toResponse(User user);

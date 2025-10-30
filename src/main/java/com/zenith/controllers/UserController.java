@@ -1,116 +1,170 @@
 package com.zenith.controllers;
 
-import com.zenith.dtos.requests.CreateUserRequest;
 import com.zenith.dtos.requests.UpdateUserRequest;
 import com.zenith.dtos.responses.PageResponse;
 import com.zenith.dtos.responses.UserResponse;
 import com.zenith.enums.RoleType;
 import com.zenith.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-@Slf4j
 @RestController
 @RequiredArgsConstructor
+@PreAuthorize("hasRole('ADMIN')")
 @RequestMapping("/api/v1/users")
-@Tag(name = "Users", description = "APIs for managing users")
+@Tag(name = "Users", description = "User management operations")
 public class UserController {
     private final UserService userService;
 
-    @GetMapping
-    @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasRole('ADMIN')")
     @Operation(
             summary = "Get all users",
-            description =
-                    "Retrieves a paginated list of all users. Can be filtered by role using the role query parameter.")
-    @ApiResponse(responseCode = "200", description = "Users retrieved successfully")
+            description = "Retrieve a paginated list of all users with optional role filtering",
+            parameters = {
+                @Parameter(
+                        name = "page",
+                        description = "Page number (0-based index)",
+                        schema = @Schema(defaultValue = "0", minimum = "0")),
+                @Parameter(
+                        name = "size",
+                        description = "Page size",
+                        schema = @Schema(defaultValue = "20", minimum = "1", maximum = "100")),
+                @Parameter(
+                        name = "sortBy",
+                        description =
+                                "Field to sort by (e.g., username, email, firstName, lastName, createdAt, updatedAt)"),
+                @Parameter(
+                        name = "sortDirection",
+                        description = "Sort direction (ASC or DESC)",
+                        schema = @Schema(allowableValues = {"ASC", "DESC"})),
+                @Parameter(name = "role", description = "Optional role to filter by"),
+            },
+            responses = {
+                @ApiResponse(
+                        responseCode = "200",
+                        description = "Successful retrieval",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = PageResponse.class)))
+            })
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
     public PageResponse<UserResponse> getAllUsers(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "createdAt") String sortBy,
-            @RequestParam(defaultValue = "desc") String direction,
+            @RequestParam(name = "page", required = false, defaultValue = "0") @Min(0) int page,
+            @RequestParam(name = "size", required = false, defaultValue = "20") @Min(1) @Max(100) int size,
+            @RequestParam(name = "sortBy", required = false, defaultValue = "createdAt") String sortBy,
+            @RequestParam(name = "sortDirection", required = false, defaultValue = "ASC") String sortDirection,
             @RequestParam(required = false) RoleType role) {
-        log.info("Received request to get all users" + (role != null ? " with role: " + role : ""));
-        Sort sort = direction.equalsIgnoreCase("asc")
+        userService.validateSortParams(sortBy, sortDirection);
+        Sort sort = sortDirection.equalsIgnoreCase("asc")
                 ? Sort.by(sortBy).ascending()
                 : Sort.by(sortBy).descending();
-        Pageable pageable = PageRequest.of(page, size, sort);
-        PageResponse<UserResponse> response = userService.getAllUsers(role, pageable);
-        log.info("Returning {} users" + (role != null ? " with role: " + role : ""), response.getTotalElements());
-        return response;
+        PageRequest pageable = PageRequest.of(page, size, sort);
+        return userService.getAllUsers(role, pageable);
     }
 
-    @GetMapping("/{id}")
+    @Operation(
+            summary = "Get current user",
+            description = "Retrieve the currently authenticated user's information",
+            responses = {
+                @ApiResponse(
+                        responseCode = "200",
+                        description = "Successful retrieval",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = UserResponse.class)))
+            })
+    @GetMapping("/me")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Get user by ID", description = "Retrieves a user by their ID")
-    @ApiResponse(responseCode = "200", description = "User retrieved successfully")
-    @ApiResponse(responseCode = "404", description = "User not found")
-    public UserResponse getUserById(@PathVariable("id") Long id) {
-        log.info("Received request to get user with id: {}", id);
-        UserResponse response = userService.getUserById(id);
-        log.info("Returning user with id: {}", id);
-        return response;
+    @PreAuthorize("isAuthenticated()")
+    public UserResponse getCurrentUser(Authentication authentication) {
+        return userService.getCurrentUser(authentication.getName());
     }
 
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Create a new user", description = "Creates a new user with the provided details")
-    @ApiResponse(responseCode = "201", description = "User created successfully")
-    @ApiResponse(responseCode = "400", description = "Invalid user details")
-    public UserResponse createUser(@Valid @RequestBody CreateUserRequest request) {
-        log.info("Received request to create user with username: {}", request.username());
-        UserResponse response = userService.createUser(request);
-        log.info("User created successfully with id: {}", response.id());
-        return response;
-    }
-
-    @PutMapping("/{id}")
+    @Operation(
+            summary = "Get user by ID",
+            description = "Retrieve a specific user by their ID",
+            responses = {
+                @ApiResponse(
+                        responseCode = "200",
+                        description = "Successful retrieval",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = UserResponse.class)))
+            })
+    @GetMapping("/{userId}")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Update a user", description = "Updates an existing user with the provided details")
-    @ApiResponse(responseCode = "200", description = "User updated successfully")
-    @ApiResponse(responseCode = "400", description = "Invalid user details")
-    @ApiResponse(responseCode = "404", description = "User not found")
-    public UserResponse updateUser(@PathVariable("id") Long id, @Valid @RequestBody UpdateUserRequest request) {
-        log.info("Received request to update user with id: {}", id);
-        UserResponse response = userService.updateUser(id, request);
-        log.info("User updated successfully with id: {}", id);
-        return response;
+    public UserResponse getUserById(
+            @Parameter(description = "ID of the user to retrieve", required = true) @PathVariable("userId")
+                    UUID userId) {
+        return userService.getUserById(userId);
     }
 
-    @PatchMapping("/{id}/role")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Update user role", description = "Updates a user's role to the specified role")
-    @ApiResponse(responseCode = "204", description = "User role updated successfully")
-    @ApiResponse(responseCode = "400", description = "Invalid role specified")
-    @ApiResponse(responseCode = "404", description = "User not found")
-    public void updateUserRole(@PathVariable("id") Long id, @RequestParam("role") RoleType role) {
-        log.info("Received request to update user with id: {} to role: {}", id, role);
-        userService.updateUserRole(id, role);
-        log.info("User with id: {} role updated to {} successfully", id, role);
+    @Operation(
+            summary = "Update a user",
+            description = "Update an existing user's information",
+            responses = {
+                @ApiResponse(
+                        responseCode = "200",
+                        description = "User updated successfully",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = UserResponse.class)))
+            })
+    @PutMapping("/{userId}")
+    @ResponseStatus(HttpStatus.OK)
+    public UserResponse updateUser(
+            @Parameter(description = "ID of the user to update", required = true) @PathVariable("userId") UUID userId,
+            @Valid @RequestBody UpdateUserRequest request) {
+        return userService.updateUser(userId, request);
     }
 
-    @DeleteMapping("/{id}")
+    @Operation(
+            summary = "Update user role",
+            description = "Update a user's role",
+            responses = {
+                @ApiResponse(
+                        responseCode = "200",
+                        description = "User role updated successfully",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = UserResponse.class)))
+            })
+    @PatchMapping("/{userId}/role")
+    @ResponseStatus(HttpStatus.OK)
+    public UserResponse updateUserRole(
+            @Parameter(description = "ID of the user to update", required = true) @PathVariable("userId") UUID userId,
+            @Parameter(description = "Role to set", required = true) @RequestParam("role") RoleType role) {
+        return userService.updateUserRole(userId, role);
+    }
+
+    @Operation(
+            summary = "Delete a user",
+            description = "Delete a user by their ID",
+            responses = {@ApiResponse(responseCode = "204", description = "User deleted successfully")})
+    @DeleteMapping("/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Delete a user", description = "Deletes a user by their ID")
-    @ApiResponse(responseCode = "204", description = "User deleted successfully")
-    @ApiResponse(responseCode = "404", description = "User not found")
-    public void deleteUser(@PathVariable("id") Long id) {
-        log.info("Received request to delete user with id: {}", id);
-        userService.deleteUser(id);
-        log.info("User deleted successfully with id: {}", id);
+    public void deleteUser(
+            @Parameter(description = "ID of the user to delete", required = true) @PathVariable("userId") UUID userId) {
+        userService.deleteUser(userId);
     }
 }

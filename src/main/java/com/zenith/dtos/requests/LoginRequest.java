@@ -4,18 +4,18 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-@Schema(description = "User login request")
+@Schema(description = "Request object for user login")
 public record LoginRequest(
-        @Size(max = 50, message = "Username must be less than {max} characters")
-                @Schema(description = "Username", example = "john_doe")
+        @Schema(description = "Username of the user", example = "john_doe")
+                @Size(max = 50, message = "Username must be less than {max} characters")
                 String username,
-        @Size(max = 100, message = "Email must be less than {max} characters")
-                @Schema(description = "User email", example = "john@example.com")
+        @Schema(description = "Email of the user", example = "john@example.com")
+                @Size(max = 100, message = "Email must be less than {max} characters")
                 String email,
-        @NotBlank(message = "Password is required")
-                @Size(min = 8, max = 100, message = "Password must be between {min} and {max} characters")
-                @Schema(
-                        description = "User password",
+        @Schema(
+                        description = "Password of the user",
                         example = "password123",
                         requiredMode = Schema.RequiredMode.REQUIRED)
+                @NotBlank(message = "Password is required")
+                @Size(min = 8, max = 100, message = "Password must be between {min} and {max} characters")
                 String password) {}

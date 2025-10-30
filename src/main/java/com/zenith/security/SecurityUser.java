@@ -3,6 +3,7 @@ package com.zenith.security;
 import com.zenith.entities.User;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -34,7 +35,7 @@ public class SecurityUser implements UserDetails {
         return user.getEmail();
     }
 
-    public Long getId() {
+    public UUID getId() {
         return user.getId();
     }
 }

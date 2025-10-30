@@ -79,7 +79,6 @@ public class DataInitializer {
             // Create posts for admin user
             Post adminDraftPost = Post.builder()
                     .title("Spring Boot Best Practices")
-                    .slug("spring-boot-best-practices")
                     .content(
                             "In this post, I'll share some of the best practices I've learned while working with Spring Boot...")
                     .status(PostStatus.DRAFT)
@@ -91,7 +90,6 @@ public class DataInitializer {
 
             Post adminPublishedPost = Post.builder()
                     .title("Mastering Java Streams")
-                    .slug("mastering-java-streams")
                     .content(
                             "Java Streams have revolutionized how we process collections in Java. Let's dive deep into their capabilities...")
                     .status(PostStatus.PUBLISHED)
@@ -103,7 +101,6 @@ public class DataInitializer {
 
             Post adminArchivedPost = Post.builder()
                     .title("Legacy Java EE Patterns")
-                    .slug("legacy-java-ee-patterns")
                     .content(
                             "While still useful in some contexts, many Java EE patterns have been replaced by simpler approaches...")
                     .status(PostStatus.ARCHIVED)
@@ -116,7 +113,6 @@ public class DataInitializer {
             // Create posts for test user 1
             Post testUser1DraftPost = Post.builder()
                     .title("My Morning Routine for Productivity")
-                    .slug("my-morning-routine-for-productivity")
                     .content(
                             "I've been experimenting with different morning routines to boost my productivity. Here's what works for me...")
                     .status(PostStatus.DRAFT)
@@ -128,7 +124,6 @@ public class DataInitializer {
 
             Post testUser1PublishedPost = Post.builder()
                     .title("10 Lifestyle Hacks for Better Work-Life Balance")
-                    .slug("10-lifestyle-hacks-for-better-work-life-balance")
                     .content(
                             "In today's fast-paced world, maintaining work-life balance is crucial. Here are my top 10 tips...")
                     .status(PostStatus.PUBLISHED)
@@ -140,7 +135,6 @@ public class DataInitializer {
 
             Post testUser1ArchivedPost = Post.builder()
                     .title("Vintage Fashion Trends Making a Comeback")
-                    .slug("vintage-fashion-trends-making-a-comeback")
                     .content(
                             "Fashion trends from the 90s are making a big comeback. Let's explore which ones are worth trying...")
                     .status(PostStatus.ARCHIVED)
@@ -153,7 +147,6 @@ public class DataInitializer {
             // Create posts for test user 2
             Post testUser2DraftPost = Post.builder()
                     .title("Hidden Gems in Southeast Asia")
-                    .slug("hidden-gems-in-southeast-asia")
                     .content(
                             "During my recent trip, I discovered some amazing hidden gems in Southeast Asia. Here are my favorites...")
                     .status(PostStatus.DRAFT)
@@ -165,7 +158,6 @@ public class DataInitializer {
 
             Post testUser2PublishedPost = Post.builder()
                     .title("The Ultimate Guide to Solo Travel")
-                    .slug("the-ultimate-guide-to-solo-travel")
                     .content(
                             "Solo travel can be intimidating but incredibly rewarding. Here's my comprehensive guide...")
                     .status(PostStatus.PUBLISHED)
@@ -177,7 +169,6 @@ public class DataInitializer {
 
             Post testUser2ArchivedPost = Post.builder()
                     .title("Traveling on a Budget: Tips and Tricks")
-                    .slug("travelling-on-a-budget-tips-and-tricks")
                     .content(
                             "You don't need to be rich to travel the world. Here are my best tips for budget travel...")
                     .status(PostStatus.ARCHIVED)
@@ -277,13 +268,13 @@ public class DataInitializer {
         // Create spam comment
         Comment spamComment = Comment.builder()
                 .content("Check out my website for amazing deals! https://spam.com")
-                .status(CommentStatus.SPAM)
+                .status(CommentStatus.REJECTED)
                 .post(post)
                 .author(testUser2)
                 .build();
         commentRepository.save(spamComment);
 
-        // Create archived comment
+        // create archived Comment
         Comment archivedComment = Comment.builder()
                 .content("I don't agree with some points here, but it's still a good read.")
                 .status(CommentStatus.ARCHIVED)

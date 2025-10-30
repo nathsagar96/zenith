@@ -4,12 +4,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-@Schema(description = "Category creation request")
+@Schema(description = "Request object for creating or updating a category")
 public record CategoryRequest(
-        @NotBlank(message = "Name is required")
-                @Size(max = 50, message = "Name must be less than {max} characters")
-                @Schema(
-                        description = "Category name",
+        @Schema(
+                        description = "Name of the category",
                         example = "Technology",
                         requiredMode = Schema.RequiredMode.REQUIRED)
+                @NotBlank(message = "Name is required")
+                @Size(max = 50, message = "Name must be less than {max} characters")
                 String name) {}

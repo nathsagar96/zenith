@@ -5,43 +5,55 @@ import com.zenith.dtos.requests.RegisterRequest;
 import com.zenith.dtos.responses.AuthResponse;
 import com.zenith.services.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/auth")
-@Tag(name = "Authentication", description = "APIs for user authentication and registration")
+@Tag(name = "Authentication", description = "User authentication operations")
 public class AuthController {
     private final AuthService authService;
 
+    @Operation(
+            summary = "Register a new user",
+            description = "Create a new user account",
+            responses = {
+                @ApiResponse(
+                        responseCode = "201",
+                        description = "User registered successfully",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = AuthResponse.class)))
+            })
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Register a new user", description = "Registers a new user with the provided details")
-    @ApiResponse(responseCode = "201", description = "User registered successfully")
-    @ApiResponse(responseCode = "400", description = "Invalid registration details")
     public AuthResponse register(@Valid @RequestBody RegisterRequest request) {
-        log.info("Received registration request for username: {}", request.username());
-        AuthResponse response = authService.register(request);
-        log.info("User registered successfully with username: {}", request.username());
-        return response;
+        return authService.register(request);
     }
 
+    @Operation(
+            summary = "Login a user",
+            description = "Authenticate a user and return a JWT token",
+            responses = {
+                @ApiResponse(
+                        responseCode = "200",
+                        description = "Login successful",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = AuthResponse.class)))
+            })
     @PostMapping("/login")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "User login", description = "Authenticates a user and returns a JWT token")
-    @ApiResponse(responseCode = "200", description = "Login successful")
-    @ApiResponse(responseCode = "401", description = "Invalid credentials")
     public AuthResponse login(@Valid @RequestBody LoginRequest request) {
-        log.info("Received login request");
-        AuthResponse response = authService.login(request);
-        log.info("User logged in successfully");
-        return response;
+        return authService.login(request);
     }
 }

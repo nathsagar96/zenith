@@ -3,12 +3,13 @@ package com.zenith.dtos.requests;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Size;
 import java.util.Set;
+import java.util.UUID;
 
-@Schema(description = "Post update request")
+@Schema(description = "Request object for updating a post")
 public record UpdatePostRequest(
-        @Size(max = 100, message = "Title must be less than {max} characters")
-                @Schema(description = "Updated post title", example = "Updated Post Title")
+        @Schema(description = "Updated title of the post", example = "Updated Title")
+                @Size(max = 100, message = "Title must be less than {max} characters")
                 String title,
-        @Schema(description = "Updated post content", example = "This is the updated content") String content,
-        @Schema(description = "Updated category name", example = "Technology") String category,
-        @Schema(description = "Updated list of tag names", example = "[\"Java\", \"Spring\"]") Set<String> tags) {}
+        @Schema(description = "Updated content of the post", example = "This is the updated content") String content,
+        @Schema(description = "Updated category ID", example = "123e4567-e89b-12d3-a456-426614174000") UUID categoryId,
+        @Schema(description = "Updated list of tags", example = "[\"spring\", \"java\"]") Set<String> tags) {}

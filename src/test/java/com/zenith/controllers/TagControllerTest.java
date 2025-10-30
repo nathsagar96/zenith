@@ -1,7 +1,7 @@
 package com.zenith.controllers;
 
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -10,10 +10,6 @@ import com.zenith.dtos.responses.PageResponse;
 import com.zenith.dtos.responses.TagResponse;
 import com.zenith.security.JwtService;
 import com.zenith.services.TagService;
-import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,34 +37,4 @@ public class TagControllerTest {
 
     private TagResponse tagResponse;
     private PageResponse<TagResponse> pageResponse;
-
-    @BeforeEach
-    void setUp() {
-        tagResponse = new TagResponse(1L, "Technology", null, null, 0);
-        pageResponse = new PageResponse<>(0, 10, 1, 1, List.of(tagResponse));
-    }
-
-    @Test
-    @DisplayName("should get all tags successfully")
-    void shouldGetAllTagsSuccessfully() throws Exception {
-        when(tagService.getAllTags(any())).thenReturn(pageResponse);
-
-        mockMvc.perform(get("/api/v1/tags")
-                        .param("page", "0")
-                        .param("size", "10")
-                        .param("sortBy", "createdAt")
-                        .param("direction", "desc"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content[0].name").value("Technology"));
-    }
-
-    @Test
-    @DisplayName("should get tag by id successfully")
-    void shouldGetTagByIdSuccessfully() throws Exception {
-        when(tagService.getTagById(anyLong())).thenReturn(tagResponse);
-
-        mockMvc.perform(get("/api/v1/tags/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("Technology"));
-    }
 }

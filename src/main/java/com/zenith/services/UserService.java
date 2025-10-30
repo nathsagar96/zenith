@@ -1,6 +1,5 @@
 package com.zenith.services;
 
-import com.zenith.dtos.requests.CreateUserRequest;
 import com.zenith.dtos.requests.UpdateUserRequest;
 import com.zenith.dtos.responses.PageResponse;
 import com.zenith.dtos.responses.UserResponse;
@@ -10,18 +9,19 @@ import com.zenith.exceptions.DuplicateResourceException;
 import com.zenith.exceptions.ForbiddenException;
 import com.zenith.exceptions.ResourceNotFoundException;
 import com.zenith.exceptions.UnauthorizedException;
+import com.zenith.exceptions.ValidationException;
 import com.zenith.mappers.UserMapper;
 import com.zenith.repositories.UserRepository;
+import com.zenith.utils.SecurityUtils;
+import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -31,17 +31,26 @@ public class UserService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
 
+    public static List<String> ALLOWED_SORT_FIELDS =
+            List.of("username", "email", "firstName", "lastName", "createdAt", "updatedAt");
+
+    public void validateSortParams(String sortBy, String sortDirection) {
+        if (!ALLOWED_SORT_FIELDS.contains(sortBy.toLowerCase())) {
+            throw new ValidationException("Invalid sort field: " + sortBy);
+        }
+        if (!List.of("asc", "desc").contains(sortDirection.toLowerCase())) {
+            throw new ValidationException("Invalid sort direction: " + sortDirection);
+        }
+    }
+
     public PageResponse<UserResponse> getAllUsers(RoleType role, Pageable pageable) {
         Page<User> users;
 
         if (role != null) {
-            log.info("Fetching users with role: {}", role);
             users = userRepository.findByRole(role, pageable);
         } else {
-            log.info("Fetching all users");
             users = userRepository.findAll(pageable);
         }
-
         return new PageResponse<>(
                 users.getNumber(),
                 users.getSize(),
@@ -50,54 +59,36 @@ public class UserService {
                 users.stream().map(userMapper::toResponse).toList());
     }
 
-    public UserResponse getUserById(long id) {
-        log.info("Fetching user with id: {}", id);
-        User user = findById(id);
-        return userMapper.toResponse(user);
+    public UserResponse getCurrentUser(String username) {
+        return userRepository
+                .findByUsername(username)
+                .map(userMapper::toResponse)
+                .orElseThrow(() -> new UnauthorizedException("No authenticated user found"));
+    }
+
+    public UserResponse getUserById(UUID userId) {
+        return userMapper.toResponse(findById(userId));
     }
 
     @Transactional
-    public UserResponse createUser(CreateUserRequest request) {
-        log.info("Creating user with username: {}", request.username());
+    public UserResponse updateUser(UUID userId, UpdateUserRequest request) {
+        String currentUsername = SecurityUtils.getCurrentUsername();
+        User currentUser = userRepository
+                .findByUsername(currentUsername)
+                .orElseThrow(() -> new UnauthorizedException("No authenticated user found"));
 
-        if (userRepository.existsByUsername(request.username())) {
-            log.warn("User creation failed: Username '{}' already exists", request.username());
-            throw new DuplicateResourceException("User with username: '" + request.username() + "' already exists");
+        if (!currentUser.getId().equals(userId) && !SecurityUtils.isAdmin()) {
+            throw new ForbiddenException("You can not update the profile");
         }
 
-        if (userRepository.existsByEmail(request.email())) {
-            log.warn("User creation failed: Email '{}' already exists", request.email());
-            throw new DuplicateResourceException("User with email: '" + request.username() + "' already exists");
-        }
-
-        User newUser = userMapper.toEntity(request);
-        newUser.setPassword(passwordEncoder.encode(request.password()));
-
-        User createdUser = userRepository.save(newUser);
-        log.info("User created successfully with id: {}", createdUser.getId());
-        return userMapper.toResponse(createdUser);
-    }
-
-    @Transactional
-    public UserResponse updateUser(long id, UpdateUserRequest request) {
-        log.info("Updating user with id: {}", id);
-
-        User currentUser = getCurrentUser();
-        if (currentUser.getId() != id && !currentUser.getRole().equals(RoleType.ADMIN)) {
-            log.warn("User update failed: User {} attempted to update user {}", currentUser.getId(), id);
-            throw new ForbiddenException("You can only update your own profile");
-        }
-
-        User existingUser = findById(id);
+        User existingUser = findById(userId);
 
         if (request.username() != null && userRepository.existsByUsername(request.username())) {
-            log.warn("User update failed: Username '{}' already exists", request.username());
-            throw new DuplicateResourceException("User with username: '" + request.username() + "' already exists");
+            throw new DuplicateResourceException("User with username already exists");
         }
 
         if (request.email() != null && userRepository.existsByEmail(request.email())) {
-            log.warn("User update failed: Email '{}' already exists", request.email());
-            throw new DuplicateResourceException("User with email: '" + request.email() + "' already exists");
+            throw new DuplicateResourceException("User with email already exists");
         }
 
         if (request.password() != null) {
@@ -116,41 +107,25 @@ public class UserService {
             existingUser.setBio(request.bio());
         }
 
-        User updatedUser = userRepository.save(existingUser);
-        log.info("User updated successfully with id: {}", updatedUser.getId());
-        return userMapper.toResponse(updatedUser);
+        return userMapper.toResponse(userRepository.save(existingUser));
     }
 
     @Transactional
-    public void deleteUser(Long id) {
-        log.info("Deleting user with id: {}", id);
-
-        User user = findById(id);
-        userRepository.delete(user);
-        log.info("User deleted successfully with id: {}", id);
+    public UserResponse updateUserRole(UUID userId, RoleType role) {
+        User existingUser = findById(userId);
+        existingUser.setRole(role);
+        return userMapper.toResponse(userRepository.save(existingUser));
     }
 
     @Transactional
-    public void updateUserRole(Long id, RoleType role) {
-        log.info("Updating role for user with id: {} to {}", id, role);
-
-        User user = findById(id);
-        user.setRole(role);
-        userRepository.save(user);
-        log.info("User role updated successfully with id: {}", id);
+    public void deleteUser(UUID userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new ResourceNotFoundException("User not found");
+        }
+        userRepository.deleteById(userId);
     }
 
-    private User findById(Long id) {
-        return userRepository
-                .findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id:" + id));
-    }
-
-    public User getCurrentUser() {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        return userRepository
-                .findByUsername(username)
-                .orElseThrow(() -> new UnauthorizedException("No authenticated user found"));
+    private User findById(UUID userId) {
+        return userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 }

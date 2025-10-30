@@ -15,6 +15,7 @@ public interface TagMapper {
     @Mapping(target = "posts", ignore = true)
     Tag toEntity(TagRequest request);
 
+    @Mapping(source = "id", target = "tagId")
     @Mapping(source = "posts", target = "postCount", qualifiedByName = "postCount")
     TagResponse toResponse(Tag tag);
 

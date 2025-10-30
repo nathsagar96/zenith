@@ -1,40 +1,41 @@
 package com.zenith.dtos.requests;
 
+import com.zenith.enums.RoleType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-@Schema(description = "User creation request")
+@Schema(description = "Request object for creating a user")
 public record CreateUserRequest(
-        @NotBlank(message = "Username is required")
+        @Schema(description = "Username of the user", example = "john_doe", requiredMode = Schema.RequiredMode.REQUIRED)
+                @NotBlank(message = "Username is required")
                 @Pattern(
                         regexp = "^[a-zA-Z0-9_]+$",
                         message = "Username can only contain letters, numbers, and underscores")
                 @Size(max = 50, message = "Username must be less than {max} characters")
-                @Schema(description = "Username", example = "john_doe", requiredMode = Schema.RequiredMode.REQUIRED)
                 String username,
-        @NotBlank(message = "Email is required")
-                @Email(message = "Email must be valid")
-                @Size(max = 100, message = "Email must be less than {max} characters")
-                @Schema(
-                        description = "User email",
+        @Schema(
+                        description = "Email of the user",
                         example = "john@example.com",
                         requiredMode = Schema.RequiredMode.REQUIRED)
+                @NotBlank(message = "Email is required")
+                @Email(message = "Email must be valid")
+                @Size(max = 100, message = "Email must be less than {max} characters")
                 String email,
-        @NotBlank(message = "Password is required")
-                @Size(min = 8, max = 100, message = "Password must be between {min} and {max} characters")
-                @Schema(
-                        description = "User password",
-                        example = "password123",
+        @Schema(
+                        description = "Password of the user",
+                        example = "SecurePass123!",
                         requiredMode = Schema.RequiredMode.REQUIRED)
+                @NotBlank(message = "Password is required")
+                @Size(min = 8, max = 100, message = "Password must be between {min} and {max} characters")
                 String password,
-        @Size(max = 50, message = "First name must be less than {max} characters")
-                @Schema(description = "User first name", example = "John")
+        @Schema(description = "First name of the user", example = "John")
+                @Size(max = 50, message = "First name must be less than {max} characters")
                 String firstName,
-        @Size(max = 50, message = "Last name must be less than {max} characters")
-                @Schema(description = "User last name", example = "Doe")
+        @Schema(description = "Last name of the user", example = "Doe")
+                @Size(max = 50, message = "Last name must be less than {max} characters")
                 String lastName,
-        @Schema(description = "User bio", example = "Software developer") String bio,
-        @Schema(description = "User role", example = "USER") String role) {}
+        @Schema(description = "Bio of the user", example = "Software Developer") String bio,
+        @Schema(description = "Role of the user", example = "USER") RoleType role) {}

@@ -15,6 +15,7 @@ public interface CategoryMapper {
     @Mapping(target = "posts", ignore = true)
     Category toEntity(CategoryRequest request);
 
+    @Mapping(source = "id", target = "categoryId")
     @Mapping(source = "posts", target = "postCount", qualifiedByName = "postCount")
     CategoryResponse toResponse(Category category);
 

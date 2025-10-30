@@ -6,26 +6,37 @@ import com.zenith.dtos.responses.PageResponse;
 import com.zenith.entities.Category;
 import com.zenith.exceptions.DuplicateResourceException;
 import com.zenith.exceptions.ResourceNotFoundException;
+import com.zenith.exceptions.ValidationException;
 import com.zenith.mappers.CategoryMapper;
 import com.zenith.repositories.CategoryRepository;
+import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class CategoryService {
-
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
 
+    public static List<String> ALLOWED_SORT_FIELDS = List.of("name", "createdAt", "updatedAt");
+
+    public void validateSortParams(String sortBy, String sortDirection) {
+        if (!ALLOWED_SORT_FIELDS.contains(sortBy.toLowerCase())) {
+            throw new ValidationException("Invalid sort field: " + sortBy);
+        }
+        if (!List.of("asc", "desc").contains(sortDirection.toLowerCase())) {
+            throw new ValidationException("Invalid sort direction: " + sortDirection);
+        }
+    }
+
     public PageResponse<CategoryResponse> getAllCategories(Pageable pageable) {
-        log.info("Fetching all categories");
         var categories = categoryRepository.findAll(pageable);
+
         return new PageResponse<>(
                 categories.getNumber(),
                 categories.getSize(),
@@ -34,61 +45,48 @@ public class CategoryService {
                 categories.stream().map(categoryMapper::toResponse).toList());
     }
 
-    public CategoryResponse getCategoryById(Long id) {
-        log.info("Fetching category with id: {}", id);
-        Category category = findById(id);
-        return categoryMapper.toResponse(category);
+    public CategoryResponse getCategoryById(UUID categoryId) {
+        return categoryMapper.toResponse(findById(categoryId));
     }
 
     @Transactional
     public CategoryResponse createCategory(CategoryRequest request) {
-        log.info("Creating category with name: {}", request.name());
-
-        if (categoryRepository.existsByNameIgnoreCase(request.name())) {
-            log.warn("Category creation failed: Category with name '{}' already exists", request.name());
-            throw new DuplicateResourceException("Category with name: '" + request.name() + "' already exists");
-        }
-
+        checkExistence(request.name());
         Category newCategory = categoryMapper.toEntity(request);
-        Category createdCategory = categoryRepository.save(newCategory);
-        log.info("Category created successfully with id: {}", createdCategory.getId());
-        return categoryMapper.toResponse(createdCategory);
+
+        return categoryMapper.toResponse(categoryRepository.save(newCategory));
     }
 
     @Transactional
-    public CategoryResponse updateCategory(Long id, CategoryRequest request) {
-        log.info("Updating category with id: {}", id);
+    public CategoryResponse updateCategory(UUID categoryId, CategoryRequest request) {
+        Category existingCategory = findById(categoryId);
 
-        Category existingCategory = findById(id);
-
-        if (categoryRepository.existsByNameIgnoreCase(request.name())) {
-            log.warn("Category update failed: Category with name '{}' already exists", request.name());
-            throw new DuplicateResourceException("Category with name: '" + request.name() + "' already exists");
-        }
-
+        checkExistence(request.name());
         existingCategory.setName(request.name());
 
-        Category updatedCategory = categoryRepository.save(existingCategory);
-        log.info("Category updated successfully with id: {}", updatedCategory.getId());
-        return categoryMapper.toResponse(updatedCategory);
+        return categoryMapper.toResponse(categoryRepository.save(existingCategory));
     }
 
     @Transactional
-    public void deleteCategory(Long id) {
-        log.info("Deleting category with id: {}", id);
+    public void deleteCategory(UUID categoryId) {
+        Category category = findById(categoryId);
 
-        if (!categoryRepository.existsById(id)) {
-            log.warn("Category deletion failed: Category not found with id: {}", id);
-            throw new ResourceNotFoundException("Category not found with id: " + id);
+        if (!category.getPosts().isEmpty()) {
+            throw new ValidationException("Cannot delete category wih posts");
         }
 
-        categoryRepository.deleteById(id);
-        log.info("Category deleted successfully with id: {}", id);
+        categoryRepository.deleteById(categoryId);
     }
 
-    private Category findById(Long id) {
+    private Category findById(UUID categoryId) {
         return categoryRepository
-                .findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Category not found with id: " + id));
+                .findById(categoryId)
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
+    }
+
+    private void checkExistence(String name) {
+        if (categoryRepository.existsByNameIgnoreCase(name)) {
+            throw new DuplicateResourceException("Category with name already exists");
+        }
     }
 }

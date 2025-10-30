@@ -9,20 +9,20 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(description = "Paginated response")
+@Schema(description = "Paginated response object")
 public class PageResponse<T> {
-    @Schema(description = "Current page number", example = "0")
+    @Schema(description = "Current page number", example = "1")
     private int pageNumber;
 
     @Schema(description = "Number of items per page", example = "10")
     private int pageSize;
 
-    @Schema(description = "Total number of elements", example = "100")
+    @Schema(description = "Total number of items", example = "100")
     private long totalElements;
 
     @Schema(description = "Total number of pages", example = "10")
     private int totalPages;
 
-    @Schema(description = "List of content items")
+    @Schema(description = "List of items in the current page")
     private List<T> content;
 }

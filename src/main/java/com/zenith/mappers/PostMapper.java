@@ -14,7 +14,6 @@ import org.mapstruct.Named;
 @Mapper(componentModel = "spring")
 public interface PostMapper {
 
-    @Mapping(target = "slug", ignore = true)
     @Mapping(target = "author", ignore = true)
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "category", ignore = true)
@@ -22,8 +21,9 @@ public interface PostMapper {
     @Mapping(target = "comments", ignore = true)
     Post toEntity(CreatePostRequest request);
 
-    @Mapping(source = "author.username", target = "author")
-    @Mapping(source = "category.name", target = "category")
+    @Mapping(source = "id", target = "postId")
+    @Mapping(source = "author.id", target = "authorId")
+    @Mapping(source = "category.id", target = "categoryId")
     @Mapping(source = "tags", target = "tagCount", qualifiedByName = "tagCount")
     @Mapping(source = "comments", target = "commentCount", qualifiedByName = "commentCount")
     PostResponse toResponse(Post post);
