@@ -92,7 +92,7 @@ public class CategoryController {
 
     @Operation(
             summary = "Create a new category",
-            description = "Create a new category (admin only)",
+            description = "Create a new category",
             responses = {
                 @ApiResponse(
                         responseCode = "201",
@@ -111,7 +111,7 @@ public class CategoryController {
 
     @Operation(
             summary = "Update a category",
-            description = "Update an existing category (admin only)",
+            description = "Update an existing category",
             responses = {
                 @ApiResponse(
                         responseCode = "200",
@@ -133,7 +133,7 @@ public class CategoryController {
 
     @Operation(
             summary = "Delete a category",
-            description = "Delete a category by its ID (admin only)",
+            description = "Delete a category by its ID",
             responses = {@ApiResponse(responseCode = "204", description = "Category deleted successfully")})
     @DeleteMapping("/{categoryId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

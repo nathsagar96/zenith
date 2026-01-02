@@ -91,7 +91,7 @@ public class TagController {
 
     @Operation(
             summary = "Create a new tag",
-            description = "Create a new tag (admin only)",
+            description = "Create a new tag",
             responses = {
                 @ApiResponse(
                         responseCode = "201",
@@ -110,7 +110,7 @@ public class TagController {
 
     @Operation(
             summary = "Update a tag",
-            description = "Update an existing tag (admin only)",
+            description = "Update an existing tag",
             responses = {
                 @ApiResponse(
                         responseCode = "200",
@@ -131,7 +131,7 @@ public class TagController {
 
     @Operation(
             summary = "Delete a tag",
-            description = "Delete a tag by its ID (admin only)",
+            description = "Delete a tag by its ID",
             responses = {@ApiResponse(responseCode = "204", description = "Tag deleted successfully")})
     @DeleteMapping("/{tagId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
