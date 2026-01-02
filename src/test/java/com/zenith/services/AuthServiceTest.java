@@ -69,7 +69,7 @@ public class AuthServiceTest {
     }
 
     @Test
-    @DisplayName("shouldRegisterUserSuccessfullyWhenUsernameAndEmailAreUnique")
+    @DisplayName("should register user successfully when username and email are unique")
     void shouldRegisterUserSuccessfullyWhenUsernameAndEmailAreUnique() {
         // Arrange
         when(userRepository.existsByUsername(registerRequest.username())).thenReturn(false);
@@ -93,7 +93,7 @@ public class AuthServiceTest {
     }
 
     @Test
-    @DisplayName("shouldThrowDuplicateResourceExceptionWhenUsernameAlreadyExists")
+    @DisplayName("should throw duplicate resource exception when username already exists")
     void shouldThrowDuplicateResourceExceptionWhenUsernameAlreadyExists() {
         // Arrange
         when(userRepository.existsByUsername(registerRequest.username())).thenReturn(true);
@@ -107,7 +107,7 @@ public class AuthServiceTest {
     }
 
     @Test
-    @DisplayName("shouldThrowDuplicateResourceExceptionWhenEmailAlreadyExists")
+    @DisplayName("should throw duplicate resource exception when email already exists")
     void shouldThrowDuplicateResourceExceptionWhenEmailAlreadyExists() {
         // Arrange
         when(userRepository.existsByUsername(registerRequest.username())).thenReturn(false);
@@ -122,7 +122,7 @@ public class AuthServiceTest {
     }
 
     @Test
-    @DisplayName("shouldLoginUserSuccessfullyWithUsername")
+    @DisplayName("should login user successfully with username")
     void shouldLoginUserSuccessfullyWithUsername() {
         // Arrange
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
@@ -143,7 +143,7 @@ public class AuthServiceTest {
     }
 
     @Test
-    @DisplayName("shouldLoginUserSuccessfullyWithEmail")
+    @DisplayName("should login user successfully with email")
     void shouldLoginUserSuccessfullyWithEmail() {
         // Arrange
         LoginRequest emailLoginRequest = new LoginRequest(null, "test@example.com", "password123");
@@ -165,7 +165,7 @@ public class AuthServiceTest {
     }
 
     @Test
-    @DisplayName("shouldThrowValidationExceptionWhenBothUsernameAndEmailAreNull")
+    @DisplayName("should throw validation exception when both username and email are null")
     void shouldThrowValidationExceptionWhenBothUsernameAndEmailAreNull() {
         // Arrange
         LoginRequest invalidLoginRequest = new LoginRequest(null, null, "password123");
@@ -177,7 +177,7 @@ public class AuthServiceTest {
     }
 
     @Test
-    @DisplayName("shouldHandleAuthenticationFailureGracefully")
+    @DisplayName("should handle authentication failure gracefully")
     void shouldHandleAuthenticationFailureGracefully() {
         // Arrange
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))

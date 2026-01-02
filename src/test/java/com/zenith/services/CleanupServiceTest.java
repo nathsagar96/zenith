@@ -29,7 +29,7 @@ public class CleanupServiceTest {
     private CleanupService cleanupService;
 
     @Test
-    @DisplayName("Should delete archived posts and comments older than 30 days")
+    @DisplayName("should delete archived posts and comments older than 30 days")
     void testCleanupArchivedPostsAndComments() {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime cutoffDate = now.minusDays(30);

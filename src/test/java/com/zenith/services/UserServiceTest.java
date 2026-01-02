@@ -75,7 +75,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("shouldValidateSortParamsSuccessfullyWhenValid")
+    @DisplayName("should validate sort params successfully when valid")
     void shouldValidateSortParamsSuccessfullyWhenValid() {
         // Act & Assert
         assertDoesNotThrow(() -> {
@@ -89,7 +89,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("shouldThrowValidationExceptionWhenSortFieldIsInvalid")
+    @DisplayName("should throw validation exception when sort field is invalid")
     void shouldThrowValidationExceptionWhenSortFieldIsInvalid() {
         // Act & Assert
         ValidationException exception =
@@ -99,7 +99,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("shouldThrowValidationExceptionWhenSortDirectionIsInvalid")
+    @DisplayName("should throw validation exception when sort direction is invalid")
     void shouldThrowValidationExceptionWhenSortDirectionIsInvalid() {
         // Act & Assert
         ValidationException exception = assertThrows(
@@ -109,7 +109,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("shouldGetAllUsersSuccessfully")
+    @DisplayName("should get all users successfully")
     void shouldGetAllUsersSuccessfully() {
         // Arrange
         Page<User> userPage = new PageImpl<>(List.of(user));
@@ -133,7 +133,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("shouldGetAllUsersByRoleSuccessfully")
+    @DisplayName("should get all users by role successfully")
     void shouldGetAllUsersByRoleSuccessfully() {
         // Arrange
         Page<User> userPage = new PageImpl<>(List.of(user));
@@ -153,7 +153,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("shouldGetCurrentUserSuccessfully")
+    @DisplayName("should get current user successfully")
     void shouldGetCurrentUserSuccessfully() {
         // Arrange
         when(userRepository.findByUsername(username)).thenReturn(Optional.of(user));
@@ -171,7 +171,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("shouldThrowUnauthorizedExceptionWhenCurrentUserNotFound")
+    @DisplayName("should throw unauthorized exception when current user not found")
     void shouldThrowUnauthorizedExceptionWhenCurrentUserNotFound() {
         // Arrange
         when(userRepository.findByUsername(username)).thenReturn(Optional.empty());
@@ -184,7 +184,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("shouldGetUserByIdSuccessfully")
+    @DisplayName("should get user by id successfully")
     void shouldGetUserByIdSuccessfully() {
         // Arrange
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
@@ -202,7 +202,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("shouldThrowResourceNotFoundExceptionWhenUserNotFound")
+    @DisplayName("should throw resource not found exception when user not found")
     void shouldThrowResourceNotFoundExceptionWhenUserNotFound() {
         // Arrange
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
@@ -215,7 +215,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("shouldUpdateUserSuccessfullyWhenUserUpdatesOwnProfile")
+    @DisplayName("should update user successfully when user updates own profile")
     void shouldUpdateUserSuccessfullyWhenUserUpdatesOwnProfile() {
         // Arrange
         User currentUser = User.builder()
@@ -251,7 +251,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("shouldUpdateUserSuccessfullyWhenAdminUpdatesOtherUser")
+    @DisplayName("should update user successfully when admin updates other user")
     void shouldUpdateUserSuccessfullyWhenAdminUpdatesOtherUser() {
         // Arrange
         UUID otherUserId = UUID.randomUUID();
@@ -296,7 +296,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("shouldThrowForbiddenExceptionWhenNonAdminUserUpdatesOtherUser")
+    @DisplayName("should throw forbidden exception when non admin user updates other user")
     void shouldThrowForbiddenExceptionWhenNonAdminUserUpdatesOtherUser() {
         // Arrange
         UUID otherUserId = UUID.randomUUID();
@@ -321,7 +321,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("shouldThrowDuplicateResourceExceptionWhenUpdatingUserWithDuplicateUsername")
+    @DisplayName("should throw duplicate resource exception when updating user with duplicate username")
     void shouldThrowDuplicateResourceExceptionWhenUpdatingUserWithDuplicateUsername() {
         // Arrange
         when(userRepository.findByUsername(username)).thenReturn(Optional.of(user));
@@ -340,7 +340,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("shouldThrowDuplicateResourceExceptionWhenUpdatingUserWithDuplicateEmail")
+    @DisplayName("should throw duplicate resource exception when updating user with duplicate email")
     void shouldThrowDuplicateResourceExceptionWhenUpdatingUserWithDuplicateEmail() {
         // Arrange
         UpdateUserRequest emailUpdateRequest =
@@ -362,7 +362,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("shouldUpdateUserRoleSuccessfully")
+    @DisplayName("should update user role successfully")
     void shouldUpdateUserRoleSuccessfully() {
         // Arrange
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
@@ -382,7 +382,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("shouldThrowResourceNotFoundExceptionWhenUpdatingRoleForNonExistentUser")
+    @DisplayName("should throw resource not found exception when updating role for non existent user")
     void shouldThrowResourceNotFoundExceptionWhenUpdatingRoleForNonExistentUser() {
         // Arrange
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
@@ -396,7 +396,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("shouldDeleteUserSuccessfully")
+    @DisplayName("should delete user successfully")
     void shouldDeleteUserSuccessfully() {
         // Arrange
         when(userRepository.existsById(userId)).thenReturn(true);
@@ -409,7 +409,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("shouldThrowResourceNotFoundExceptionWhenDeletingNonExistentUser")
+    @DisplayName("should throw resource not found exception when deleting non existent user")
     void shouldThrowResourceNotFoundExceptionWhenDeletingNonExistentUser() {
         // Arrange
         when(userRepository.existsById(userId)).thenReturn(false);

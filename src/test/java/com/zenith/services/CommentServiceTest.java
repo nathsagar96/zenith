@@ -124,7 +124,7 @@ public class CommentServiceTest {
     }
 
     @Test
-    @DisplayName("shouldValidateSortParamsSuccessfullyWhenValid")
+    @DisplayName("should validate sort params successfully when valid")
     void shouldValidateSortParamsSuccessfullyWhenValid() {
         // Act & Assert
         assertDoesNotThrow(() -> {
@@ -134,7 +134,7 @@ public class CommentServiceTest {
     }
 
     @Test
-    @DisplayName("shouldThrowValidationExceptionWhenSortFieldIsInvalid")
+    @DisplayName("should throw validation exception when sort field is invalid")
     void shouldThrowValidationExceptionWhenSortFieldIsInvalid() {
         // Act & Assert
         ValidationException exception =
@@ -144,7 +144,7 @@ public class CommentServiceTest {
     }
 
     @Test
-    @DisplayName("shouldThrowValidationExceptionWhenSortDirectionIsInvalid")
+    @DisplayName("should throw validation exception when sort direction is invalid")
     void shouldThrowValidationExceptionWhenSortDirectionIsInvalid() {
         // Act & Assert
         ValidationException exception = assertThrows(
@@ -154,7 +154,7 @@ public class CommentServiceTest {
     }
 
     @Test
-    @DisplayName("shouldGetAllCommentsSuccessfully")
+    @DisplayName("should get all comments successfully")
     void shouldGetAllCommentsSuccessfully() {
         // Arrange
         Page<Comment> commentPage = new PageImpl<>(List.of(comment));
@@ -181,7 +181,7 @@ public class CommentServiceTest {
     }
 
     @Test
-    @DisplayName("shouldThrowResourceNotFoundExceptionWhenPostNotFoundForGetAllComments")
+    @DisplayName("should throw resource not found exception when post not found for get all comments")
     void shouldThrowResourceNotFoundExceptionWhenPostNotFoundForGetAllComments() {
         // Arrange
         when(postRepository.existsById(postId)).thenReturn(false);
@@ -194,7 +194,7 @@ public class CommentServiceTest {
     }
 
     @Test
-    @DisplayName("shouldGetCommentsByStatusSuccessfully")
+    @DisplayName("should get comments by status successfully")
     void shouldGetCommentsByStatusSuccessfully() {
         // Arrange
         Page<Comment> commentPage = new PageImpl<>(List.of(comment));
@@ -214,7 +214,7 @@ public class CommentServiceTest {
     }
 
     @Test
-    @DisplayName("shouldCreateCommentSuccessfully")
+    @DisplayName("should create comment successfully")
     void shouldCreateCommentSuccessfully() {
         // Arrange
         when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
@@ -238,7 +238,7 @@ public class CommentServiceTest {
     }
 
     @Test
-    @DisplayName("shouldThrowUnauthorizedExceptionWhenUserNotFoundForCreateComment")
+    @DisplayName("should throw unauthorized exception when user not found for create comment")
     void shouldThrowUnauthorizedExceptionWhenUserNotFoundForCreateComment() {
         // Arrange
         when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.empty());
@@ -254,7 +254,7 @@ public class CommentServiceTest {
     }
 
     @Test
-    @DisplayName("shouldThrowResourceNotFoundExceptionWhenPostNotFoundForCreateComment")
+    @DisplayName("should throw resource not found exception when post not found for create comment")
     void shouldThrowResourceNotFoundExceptionWhenPostNotFoundForCreateComment() {
         // Arrange
         when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
@@ -271,7 +271,7 @@ public class CommentServiceTest {
     }
 
     @Test
-    @DisplayName("shouldThrowValidationExceptionWhenCreatingCommentOnUnpublishedPost")
+    @DisplayName("should throw validation exception when creating comment on unpublished post")
     void shouldThrowValidationExceptionWhenCreatingCommentOnUnpublishedPost() {
         // Arrange
         Post unpublishedPost = Post.builder()
@@ -296,7 +296,7 @@ public class CommentServiceTest {
     }
 
     @Test
-    @DisplayName("shouldUpdateCommentSuccessfully")
+    @DisplayName("should update comment successfully")
     void shouldUpdateCommentSuccessfully() {
         // Arrange
         when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
@@ -319,7 +319,7 @@ public class CommentServiceTest {
     }
 
     @Test
-    @DisplayName("shouldThrowResourceNotFoundExceptionWhenUserNotFoundForUpdateComment")
+    @DisplayName("should throw resource not found exception when user not found for update comment")
     void shouldThrowResourceNotFoundExceptionWhenUserNotFoundForUpdateComment() {
         // Arrange
         when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.empty());
@@ -334,7 +334,7 @@ public class CommentServiceTest {
     }
 
     @Test
-    @DisplayName("shouldThrowResourceNotFoundExceptionWhenCommentNotFoundForUpdate")
+    @DisplayName("should throw resource not found exception when comment not found for update")
     void shouldThrowResourceNotFoundExceptionWhenCommentNotFoundForUpdate() {
         // Arrange
         when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
@@ -351,7 +351,7 @@ public class CommentServiceTest {
     }
 
     @Test
-    @DisplayName("shouldThrowForbiddenExceptionWhenUserNotOwnerForUpdateComment")
+    @DisplayName("should throw forbidden exception when user not owner for update comment")
     void shouldThrowForbiddenExceptionWhenUserNotOwnerForUpdateComment() {
         // Arrange
         Comment otherUsersComment = Comment.builder()
@@ -375,7 +375,7 @@ public class CommentServiceTest {
     }
 
     @Test
-    @DisplayName("shouldAllowAdminToUpdateAnyComment")
+    @DisplayName("should allow admin to update any comment")
     void shouldAllowAdminToUpdateAnyComment() {
         // Arrange
         Comment otherUsersComment = Comment.builder()
@@ -403,7 +403,7 @@ public class CommentServiceTest {
     }
 
     @Test
-    @DisplayName("shouldAllowModeratorToUpdateAnyComment")
+    @DisplayName("should allow moderator to update any comment")
     void shouldAllowModeratorToUpdateAnyComment() {
         // Arrange
         Comment otherUsersComment = Comment.builder()
@@ -432,7 +432,7 @@ public class CommentServiceTest {
     }
 
     @Test
-    @DisplayName("shouldDeleteCommentSuccessfully")
+    @DisplayName("should delete comment successfully")
     void shouldDeleteCommentSuccessfully() {
         // Arrange
         when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
@@ -447,7 +447,7 @@ public class CommentServiceTest {
     }
 
     @Test
-    @DisplayName("shouldThrowResourceNotFoundExceptionWhenUserNotFoundForDeleteComment")
+    @DisplayName("should throw resource not found exception when user not found for delete comment")
     void shouldThrowResourceNotFoundExceptionWhenUserNotFoundForDeleteComment() {
         // Arrange
         when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.empty());
@@ -462,7 +462,7 @@ public class CommentServiceTest {
     }
 
     @Test
-    @DisplayName("shouldThrowResourceNotFoundExceptionWhenCommentNotFoundForDelete")
+    @DisplayName("should throw resource not found exception when comment not found for delete")
     void shouldThrowResourceNotFoundExceptionWhenCommentNotFoundForDelete() {
         // Arrange
         when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
@@ -478,7 +478,7 @@ public class CommentServiceTest {
     }
 
     @Test
-    @DisplayName("shouldThrowForbiddenExceptionWhenUserNotOwnerForDeleteComment")
+    @DisplayName("should throw forbidden exception when user not owner for delete comment")
     void shouldThrowForbiddenExceptionWhenUserNotOwnerForDeleteComment() {
         // Arrange
         Comment otherUsersComment = Comment.builder()
@@ -500,7 +500,7 @@ public class CommentServiceTest {
     }
 
     @Test
-    @DisplayName("shouldAllowAdminToDeleteAnyComment")
+    @DisplayName("should allow admin to delete any comment")
     void shouldAllowAdminToDeleteAnyComment() {
         // Arrange
         Comment otherUsersComment = Comment.builder()
@@ -522,7 +522,7 @@ public class CommentServiceTest {
     }
 
     @Test
-    @DisplayName("shouldAllowModeratorToDeleteAnyComment")
+    @DisplayName("should allow moderator to delete any comment")
     void shouldAllowModeratorToDeleteAnyComment() {
         // Arrange
         Comment otherUsersComment = Comment.builder()
@@ -544,7 +544,7 @@ public class CommentServiceTest {
     }
 
     @Test
-    @DisplayName("shouldUpdateCommentStatusSuccessfully")
+    @DisplayName("should update comment status successfully")
     void shouldUpdateCommentStatusSuccessfully() {
         // Arrange
         when(commentRepository.findById(commentId)).thenReturn(Optional.of(comment));
@@ -565,7 +565,7 @@ public class CommentServiceTest {
     }
 
     @Test
-    @DisplayName("shouldThrowResourceNotFoundExceptionWhenCommentNotFoundForStatusUpdate")
+    @DisplayName("should throw resource not found exception when comment not found for status update")
     void shouldThrowResourceNotFoundExceptionWhenCommentNotFoundForStatusUpdate() {
         // Arrange
         when(commentRepository.findById(commentId)).thenReturn(Optional.empty());
@@ -581,7 +581,7 @@ public class CommentServiceTest {
     }
 
     @Test
-    @DisplayName("shouldHandleEmptyPageWhenNoCommentsFoundByStatus")
+    @DisplayName("should handle empty page when no comments found by status")
     void shouldHandleEmptyPageWhenNoCommentsFoundByStatus() {
         // Arrange
         Page<Comment> emptyPage = new PageImpl<>(List.of(), pageable, 0);
@@ -603,7 +603,7 @@ public class CommentServiceTest {
     }
 
     @Test
-    @DisplayName("shouldHandleEmptyPageWhenNoApprovedCommentsFoundForPost")
+    @DisplayName("should handle empty page when no approved comments found for post")
     void shouldHandleEmptyPageWhenNoApprovedCommentsFoundForPost() {
         // Arrange
         Page<Comment> emptyPage = new PageImpl<>(List.of(), pageable, 0);
@@ -628,7 +628,7 @@ public class CommentServiceTest {
     }
 
     @Test
-    @DisplayName("shouldHandleMultipleCommentsInPageResponse")
+    @DisplayName("should handle multiple comments in page response")
     void shouldHandleMultipleCommentsInPageResponse() {
         // Arrange
         Comment comment2 = Comment.builder()

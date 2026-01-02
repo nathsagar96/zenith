@@ -58,7 +58,7 @@ public class TagServiceTest {
     }
 
     @Test
-    @DisplayName("shouldValidateSortParamsSuccessfullyWhenValid")
+    @DisplayName("should validate sort params successfully when valid")
     void shouldValidateSortParamsSuccessfullyWhenValid() {
         // Act & Assert
         assertDoesNotThrow(() -> {
@@ -69,7 +69,7 @@ public class TagServiceTest {
     }
 
     @Test
-    @DisplayName("shouldThrowValidationExceptionWhenSortFieldIsInvalid")
+    @DisplayName("should throw validation exception when sort field is invalid")
     void shouldThrowValidationExceptionWhenSortFieldIsInvalid() {
         // Act & Assert
         ValidationException exception =
@@ -79,7 +79,7 @@ public class TagServiceTest {
     }
 
     @Test
-    @DisplayName("shouldThrowValidationExceptionWhenSortDirectionIsInvalid")
+    @DisplayName("should throw validation exception when sort direction is invalid")
     void shouldThrowValidationExceptionWhenSortDirectionIsInvalid() {
         // Act & Assert
         ValidationException exception = assertThrows(
@@ -89,7 +89,7 @@ public class TagServiceTest {
     }
 
     @Test
-    @DisplayName("shouldGetAllTagsSuccessfully")
+    @DisplayName("should get all tags successfully")
     void shouldGetAllTagsSuccessfully() {
         // Arrange
         Page<Tag> tagPage = new PageImpl<>(List.of(tag));
@@ -113,7 +113,7 @@ public class TagServiceTest {
     }
 
     @Test
-    @DisplayName("shouldGetTagByIdSuccessfully")
+    @DisplayName("should get tag by id successfully")
     void shouldGetTagByIdSuccessfully() {
         // Arrange
         when(tagRepository.findById(tagId)).thenReturn(Optional.of(tag));
@@ -131,7 +131,7 @@ public class TagServiceTest {
     }
 
     @Test
-    @DisplayName("shouldThrowResourceNotFoundExceptionWhenTagNotFound")
+    @DisplayName("should throw resource not found exception when tag not found")
     void shouldThrowResourceNotFoundExceptionWhenTagNotFound() {
         // Arrange
         when(tagRepository.findById(tagId)).thenReturn(Optional.empty());
@@ -144,7 +144,7 @@ public class TagServiceTest {
     }
 
     @Test
-    @DisplayName("shouldCreateTagSuccessfully")
+    @DisplayName("should create tag successfully")
     void shouldCreateTagSuccessfully() {
         // Arrange
         when(tagRepository.existsByNameIgnoreCase(tagRequest.name())).thenReturn(false);
@@ -166,7 +166,7 @@ public class TagServiceTest {
     }
 
     @Test
-    @DisplayName("shouldThrowDuplicateResourceExceptionWhenCreatingTagWithDuplicateName")
+    @DisplayName("should throw duplicate resource exception when creating tag with duplicate name")
     void shouldThrowDuplicateResourceExceptionWhenCreatingTagWithDuplicateName() {
         // Arrange
         when(tagRepository.existsByNameIgnoreCase(tagRequest.name())).thenReturn(true);
@@ -180,7 +180,7 @@ public class TagServiceTest {
     }
 
     @Test
-    @DisplayName("shouldUpdateTagSuccessfully")
+    @DisplayName("should update tag successfully")
     void shouldUpdateTagSuccessfully() {
         // Arrange
         TagRequest updateRequest = new TagRequest("Updated Tag");
@@ -206,7 +206,7 @@ public class TagServiceTest {
     }
 
     @Test
-    @DisplayName("shouldThrowResourceNotFoundExceptionWhenUpdatingNonExistentTag")
+    @DisplayName("should throw resource not found exception when updating non existent tag")
     void shouldThrowResourceNotFoundExceptionWhenUpdatingNonExistentTag() {
         // Arrange
         TagRequest updateRequest = new TagRequest("Updated Tag");
@@ -221,7 +221,7 @@ public class TagServiceTest {
     }
 
     @Test
-    @DisplayName("shouldThrowDuplicateResourceExceptionWhenUpdatingTagWithDuplicateName")
+    @DisplayName("should throw duplicate resource exception when updating tag with duplicate name")
     void shouldThrowDuplicateResourceExceptionWhenUpdatingTagWithDuplicateName() {
         // Arrange
         TagRequest updateRequest = new TagRequest("Duplicate Tag");
@@ -237,7 +237,7 @@ public class TagServiceTest {
     }
 
     @Test
-    @DisplayName("shouldDeleteTagSuccessfully")
+    @DisplayName("should delete tag successfully")
     void shouldDeleteTagSuccessfully() {
         // Arrange
         when(tagRepository.findById(tagId)).thenReturn(Optional.of(tag));
@@ -250,7 +250,7 @@ public class TagServiceTest {
     }
 
     @Test
-    @DisplayName("shouldThrowResourceNotFoundExceptionWhenDeletingNonExistentTag")
+    @DisplayName("should throw resource not found exception when deleting non existent tag")
     void shouldThrowResourceNotFoundExceptionWhenDeletingNonExistentTag() {
         // Arrange
         when(tagRepository.findById(tagId)).thenReturn(Optional.empty());
@@ -263,7 +263,7 @@ public class TagServiceTest {
     }
 
     @Test
-    @DisplayName("shouldThrowValidationExceptionWhenDeletingTagWithPosts")
+    @DisplayName("should throw validation exception when deleting tag with posts")
     void shouldThrowValidationExceptionWhenDeletingTagWithPosts() {
         // Arrange
         Tag tagWithPosts = Tag.builder()

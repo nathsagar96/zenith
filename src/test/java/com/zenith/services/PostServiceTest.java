@@ -145,7 +145,7 @@ public class PostServiceTest {
     }
 
     @Test
-    @DisplayName("shouldValidateSortParamsSuccessfullyWhenValid")
+    @DisplayName("should validate sort params successfully when valid")
     void shouldValidateSortParamsSuccessfullyWhenValid() {
         // Act & Assert
         assertDoesNotThrow(() -> {
@@ -155,7 +155,7 @@ public class PostServiceTest {
     }
 
     @Test
-    @DisplayName("shouldThrowValidationExceptionWhenSortFieldIsInvalid")
+    @DisplayName("should throw validation exception when sort field is invalid")
     void shouldThrowValidationExceptionWhenSortFieldIsInvalid() {
         // Act & Assert
         ValidationException exception =
@@ -165,7 +165,7 @@ public class PostServiceTest {
     }
 
     @Test
-    @DisplayName("shouldThrowValidationExceptionWhenSortDirectionIsInvalid")
+    @DisplayName("should throw validation exception when sort direction is invalid")
     void shouldThrowValidationExceptionWhenSortDirectionIsInvalid() {
         // Act & Assert
         ValidationException exception = assertThrows(
@@ -175,7 +175,7 @@ public class PostServiceTest {
     }
 
     @Test
-    @DisplayName("shouldGetPublishedPostsSuccessfully")
+    @DisplayName("should get published posts successfully")
     void shouldGetPublishedPostsSuccessfully() {
         // Arrange
         Page<Post> postPage = new PageImpl<>(List.of(post));
@@ -199,7 +199,7 @@ public class PostServiceTest {
     }
 
     @Test
-    @DisplayName("shouldGetPublishedPostsByCategorySuccessfully")
+    @DisplayName("should get published posts by category successfully")
     void shouldGetPublishedPostsByCategorySuccessfully() {
         // Arrange
         Page<Post> postPage = new PageImpl<>(List.of(post));
@@ -220,7 +220,7 @@ public class PostServiceTest {
     }
 
     @Test
-    @DisplayName("shouldGetPublishedPostsByTagSuccessfully")
+    @DisplayName("should get published posts by tag successfully")
     void shouldGetPublishedPostsByTagSuccessfully() {
         // Arrange
         Page<Post> postPage = new PageImpl<>(List.of(post));
@@ -241,7 +241,7 @@ public class PostServiceTest {
     }
 
     @Test
-    @DisplayName("shouldGetMyPostsSuccessfully")
+    @DisplayName("should get my posts successfully")
     void shouldGetMyPostsSuccessfully() {
         // Arrange
         Page<Post> postPage = new PageImpl<>(List.of(post));
@@ -262,7 +262,7 @@ public class PostServiceTest {
     }
 
     @Test
-    @DisplayName("shouldThrowUnauthorizedExceptionWhenUserNotFoundForGetMyPosts")
+    @DisplayName("should throw unauthorized exception when user not found for get my posts")
     void shouldThrowUnauthorizedExceptionWhenUserNotFoundForGetMyPosts() {
         // Arrange
         when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.empty());
@@ -275,7 +275,7 @@ public class PostServiceTest {
     }
 
     @Test
-    @DisplayName("shouldGetMyPostsByStatusSuccessfully")
+    @DisplayName("should get my posts by status successfully")
     void shouldGetMyPostsByStatusSuccessfully() {
         // Arrange
         Page<Post> postPage = new PageImpl<>(List.of(post));
@@ -297,7 +297,7 @@ public class PostServiceTest {
     }
 
     @Test
-    @DisplayName("shouldGetPostsByStatusSuccessfully")
+    @DisplayName("should get posts by status successfully")
     void shouldGetPostsByStatusSuccessfully() {
         // Arrange
         Page<Post> postPage = new PageImpl<>(List.of(post));
@@ -316,7 +316,7 @@ public class PostServiceTest {
     }
 
     @Test
-    @DisplayName("shouldGetPostByIdSuccessfullyWhenPublished")
+    @DisplayName("should get post by id successfully when published")
     void shouldGetPostByIdSuccessfullyWhenPublished() {
         // Arrange
         when(postRepository.findById(postId)).thenReturn(Optional.of(post));
@@ -335,7 +335,7 @@ public class PostServiceTest {
     }
 
     @Test
-    @DisplayName("shouldGetPostByIdSuccessfullyWhenUserHasAccess")
+    @DisplayName("should get post by id successfully when user has access")
     void shouldGetPostByIdSuccessfullyWhenUserHasAccess() {
         // Arrange
         Post draftPost = Post.builder()
@@ -363,7 +363,7 @@ public class PostServiceTest {
     }
 
     @Test
-    @DisplayName("shouldThrowResourceNotFoundExceptionWhenPostNotFound")
+    @DisplayName("should throw resource not found exception when post not found")
     void shouldThrowResourceNotFoundExceptionWhenPostNotFound() {
         // Arrange
         when(postRepository.findById(postId)).thenReturn(Optional.empty());
@@ -376,7 +376,7 @@ public class PostServiceTest {
     }
 
     @Test
-    @DisplayName("shouldThrowForbiddenExceptionWhenUserNotAuthorizedToViewPost")
+    @DisplayName("should throw forbidden exception when user not authorized to view post")
     void shouldThrowForbiddenExceptionWhenUserNotAuthorizedToViewPost() {
         // Arrange
         Post draftPost = Post.builder()
@@ -398,7 +398,7 @@ public class PostServiceTest {
     }
 
     @Test
-    @DisplayName("shouldCreatePostSuccessfully")
+    @DisplayName("should create post successfully")
     void shouldCreatePostSuccessfully() {
         // Arrange
         when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
@@ -429,7 +429,7 @@ public class PostServiceTest {
     }
 
     @Test
-    @DisplayName("shouldThrowUnauthorizedExceptionWhenUserNotFoundForCreatePost")
+    @DisplayName("should throw unauthorized exception when user not found for create post")
     void shouldThrowUnauthorizedExceptionWhenUserNotFoundForCreatePost() {
         // Arrange
         when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.empty());
@@ -443,7 +443,7 @@ public class PostServiceTest {
     }
 
     @Test
-    @DisplayName("shouldThrowResourceNotFoundExceptionWhenCategoryNotFoundForCreatePost")
+    @DisplayName("should throw resource not found exception when category not found for create post")
     void shouldThrowResourceNotFoundExceptionWhenCategoryNotFoundForCreatePost() {
         // Arrange
         when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
@@ -460,7 +460,7 @@ public class PostServiceTest {
     }
 
     @Test
-    @DisplayName("shouldUpdatePostSuccessfully")
+    @DisplayName("should update post successfully")
     void shouldUpdatePostSuccessfully() {
         // Arrange
         when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
@@ -495,7 +495,7 @@ public class PostServiceTest {
     }
 
     @Test
-    @DisplayName("shouldThrowResourceNotFoundExceptionWhenUserNotFoundForUpdatePost")
+    @DisplayName("should throw resource not found exception when user not found for update post")
     void shouldThrowResourceNotFoundExceptionWhenUserNotFoundForUpdatePost() {
         // Arrange
         when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.empty());
@@ -510,7 +510,7 @@ public class PostServiceTest {
     }
 
     @Test
-    @DisplayName("shouldThrowResourceNotFoundExceptionWhenPostNotFoundForUpdate")
+    @DisplayName("should throw resource not found exception when post not found for update")
     void shouldThrowResourceNotFoundExceptionWhenPostNotFoundForUpdate() {
         // Arrange
         when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
@@ -527,7 +527,7 @@ public class PostServiceTest {
     }
 
     @Test
-    @DisplayName("shouldThrowForbiddenExceptionWhenUserNotOwnerForUpdatePost")
+    @DisplayName("should throw forbidden exception when user not owner for update post")
     void shouldThrowForbiddenExceptionWhenUserNotOwnerForUpdatePost() {
         // Arrange
         Post otherUsersPost = Post.builder()
@@ -551,7 +551,7 @@ public class PostServiceTest {
     }
 
     @Test
-    @DisplayName("shouldDeletePostSuccessfully")
+    @DisplayName("should delete post successfully")
     void shouldDeletePostSuccessfully() {
         // Arrange
         when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
@@ -566,7 +566,7 @@ public class PostServiceTest {
     }
 
     @Test
-    @DisplayName("shouldThrowResourceNotFoundExceptionWhenUserNotFoundForDeletePost")
+    @DisplayName("should throw resource not found exception when user not found for delete post")
     void shouldThrowResourceNotFoundExceptionWhenUserNotFoundForDeletePost() {
         // Arrange
         when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.empty());
@@ -580,7 +580,7 @@ public class PostServiceTest {
     }
 
     @Test
-    @DisplayName("shouldThrowResourceNotFoundExceptionWhenPostNotFoundForDelete")
+    @DisplayName("should throw resource not found exception when post not found for delete")
     void shouldThrowResourceNotFoundExceptionWhenPostNotFoundForDelete() {
         // Arrange
         when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
@@ -595,7 +595,7 @@ public class PostServiceTest {
     }
 
     @Test
-    @DisplayName("shouldThrowForbiddenExceptionWhenUserNotOwnerForDeletePost")
+    @DisplayName("should throw forbidden exception when user not owner for delete post")
     void shouldThrowForbiddenExceptionWhenUserNotOwnerForDeletePost() {
         // Arrange
         Post otherUsersPost = Post.builder()
@@ -618,7 +618,7 @@ public class PostServiceTest {
     }
 
     @Test
-    @DisplayName("shouldUpdatePostStatusSuccessfully")
+    @DisplayName("should update post status successfully")
     void shouldUpdatePostStatusSuccessfully() {
         // Arrange
         when(postRepository.findById(postId)).thenReturn(Optional.of(post));
@@ -639,7 +639,7 @@ public class PostServiceTest {
     }
 
     @Test
-    @DisplayName("shouldThrowResourceNotFoundExceptionWhenPostNotFoundForStatusUpdate")
+    @DisplayName("should throw resource not found exception when post not found for status update")
     void shouldThrowResourceNotFoundExceptionWhenPostNotFoundForStatusUpdate() {
         // Arrange
         when(postRepository.findById(postId)).thenReturn(Optional.empty());
@@ -653,7 +653,7 @@ public class PostServiceTest {
     }
 
     @Test
-    @DisplayName("shouldHandleEmptyPageWhenNoPublishedPostsFound")
+    @DisplayName("should handle empty page when no published posts found")
     void shouldHandleEmptyPageWhenNoPublishedPostsFound() {
         // Arrange
         Page<Post> emptyPage = new PageImpl<>(List.of(), pageable, 0);
@@ -675,7 +675,7 @@ public class PostServiceTest {
     }
 
     @Test
-    @DisplayName("shouldHandleMultiplePostsInPageResponse")
+    @DisplayName("should handle multiple posts in page response")
     void shouldHandleMultiplePostsInPageResponse() {
         // Arrange
         Post post2 = Post.builder()
@@ -717,7 +717,7 @@ public class PostServiceTest {
     }
 
     @Test
-    @DisplayName("shouldAllowAdminToUpdateAnyPost")
+    @DisplayName("should allow admin to update any post")
     void shouldAllowAdminToUpdateAnyPost() {
         // Arrange
         Post otherUsersPost = Post.builder()
@@ -752,7 +752,7 @@ public class PostServiceTest {
     }
 
     @Test
-    @DisplayName("shouldAllowModeratorToUpdateAnyPost")
+    @DisplayName("should allow moderator to update any post")
     void shouldAllowModeratorToUpdateAnyPost() {
         // Arrange
         Post otherUsersPost = Post.builder()
@@ -787,7 +787,7 @@ public class PostServiceTest {
     }
 
     @Test
-    @DisplayName("shouldAllowAdminToDeleteAnyPost")
+    @DisplayName("should allow admin to delete any post")
     void shouldAllowAdminToDeleteAnyPost() {
         // Arrange
         Post otherUsersPost = Post.builder()
@@ -810,7 +810,7 @@ public class PostServiceTest {
     }
 
     @Test
-    @DisplayName("shouldAllowModeratorToDeleteAnyPost")
+    @DisplayName("should allow moderator to delete any post")
     void shouldAllowModeratorToDeleteAnyPost() {
         // Arrange
         Post otherUsersPost = Post.builder()

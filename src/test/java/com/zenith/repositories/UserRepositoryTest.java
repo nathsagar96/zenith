@@ -26,7 +26,7 @@ public class UserRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldFindUsersByRole")
+    @DisplayName("should find users by role")
     void shouldFindUsersByRole() {
         // Arrange
         User adminUser = User.builder()
@@ -63,7 +63,7 @@ public class UserRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldReturnEmptyPageWhenNoUsersFoundByRole")
+    @DisplayName("should return empty page when no users found by role")
     void shouldReturnEmptyPageWhenNoUsersFoundByRole() {
         // Arrange
         User regularUser = User.builder()
@@ -85,7 +85,7 @@ public class UserRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldReturnTrueWhenUsernameExists")
+    @DisplayName("should return true when username exists")
     void shouldReturnTrueWhenUsernameExists() {
         // Arrange
         String username = "testuser";
@@ -105,7 +105,7 @@ public class UserRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldReturnFalseWhenUsernameDoesNotExist")
+    @DisplayName("should return false when username does not exist")
     void shouldReturnFalseWhenUsernameDoesNotExist() {
         // Arrange
         String nonExistentUsername = "nonexistent";
@@ -118,7 +118,7 @@ public class UserRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldReturnTrueWhenEmailExists")
+    @DisplayName("should return true when email exists")
     void shouldReturnTrueWhenEmailExists() {
         // Arrange
         String email = "test@example.com";
@@ -138,7 +138,7 @@ public class UserRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldReturnFalseWhenEmailDoesNotExist")
+    @DisplayName("should return false when email does not exist")
     void shouldReturnFalseWhenEmailDoesNotExist() {
         // Arrange
         String nonExistentEmail = "nonexistent@example.com";
@@ -151,7 +151,7 @@ public class UserRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldFindUserByEmail")
+    @DisplayName("should find user by email")
     void shouldFindUserByEmail() {
         // Arrange
         String email = "test@example.com";
@@ -172,7 +172,7 @@ public class UserRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldReturnEmptyWhenUserNotFoundByEmail")
+    @DisplayName("should return empty when user not found by email")
     void shouldReturnEmptyWhenUserNotFoundByEmail() {
         // Arrange
         String nonExistentEmail = "nonexistent@example.com";
@@ -185,7 +185,7 @@ public class UserRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldFindUserByUsername")
+    @DisplayName("should find user by username")
     void shouldFindUserByUsername() {
         // Arrange
         String username = "testuser";
@@ -206,7 +206,7 @@ public class UserRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldReturnEmptyWhenUserNotFoundByUsername")
+    @DisplayName("should return empty when user not found by username")
     void shouldReturnEmptyWhenUserNotFoundByUsername() {
         // Arrange
         String nonExistentUsername = "nonexistent";
@@ -219,7 +219,7 @@ public class UserRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldReturnTrueWhenUsernameExistsCaseSensitive")
+    @DisplayName("should return true when username exists case sensitive")
     void shouldReturnTrueWhenUsernameExistsCaseSensitive() {
         // Arrange
         String username = "TestUser";
@@ -239,7 +239,7 @@ public class UserRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldReturnFalseWhenUsernameExistsWithDifferentCase")
+    @DisplayName("should return false when username exists with different case")
     void shouldReturnFalseWhenUsernameExistsWithDifferentCase() {
         // Arrange
         String username = "TestUser";
@@ -259,7 +259,7 @@ public class UserRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldReturnTrueWhenEmailExistsCaseSensitive")
+    @DisplayName("should return true when email exists case sensitive")
     void shouldReturnTrueWhenEmailExistsCaseSensitive() {
         // Arrange
         String email = "Test@Example.com";
@@ -279,7 +279,7 @@ public class UserRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldReturnFalseWhenEmailExistsWithDifferentCase")
+    @DisplayName("should return false when email exists with different case")
     void shouldReturnFalseWhenEmailExistsWithDifferentCase() {
         // Arrange
         String email = "Test@Example.com";
@@ -299,7 +299,7 @@ public class UserRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldSaveAndFindUser")
+    @DisplayName("should save and find user")
     void shouldSaveAndFindUser() {
         // Arrange
         User user = User.builder()
@@ -327,7 +327,7 @@ public class UserRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldDeleteUserById")
+    @DisplayName("should delete user by id")
     void shouldDeleteUserById() {
         // Arrange
         User user = User.builder()
@@ -346,7 +346,7 @@ public class UserRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldUpdateUserRole")
+    @DisplayName("should update user role")
     void shouldUpdateUserRole() {
         // Arrange
         User user = User.builder()
@@ -366,7 +366,7 @@ public class UserRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldFindAllUsers")
+    @DisplayName("should find all users")
     void shouldFindAllUsers() {
         // Arrange
         User user1 = User.builder()
@@ -393,7 +393,7 @@ public class UserRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldReturnEmptyListWhenNoUsersExist")
+    @DisplayName("should return empty list when no users exist")
     void shouldReturnEmptyListWhenNoUsersExist() {
         // Act
         List<User> users = userRepository.findAll();
@@ -403,7 +403,7 @@ public class UserRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldFindUsersByRoleWithMultipleUsers")
+    @DisplayName("should find users by role with multiple users")
     void shouldFindUsersByRoleWithMultipleUsers() {
         // Arrange
         User adminUser1 = User.builder()
@@ -440,7 +440,7 @@ public class UserRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldHandleUserWithNullOptionalFields")
+    @DisplayName("should handle user with null optional fields")
     void shouldHandleUserWithNullOptionalFields() {
         // Arrange
         User user = User.builder()

@@ -22,7 +22,7 @@ public class TagRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldFindTagByNameIgnoreCase")
+    @DisplayName("should find tag by name ignore case")
     void shouldFindTagByNameIgnoreCase() {
         // Arrange
         String tagName = "Java";
@@ -38,7 +38,7 @@ public class TagRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldReturnEmptyWhenTagNotFoundByNameIgnoreCase")
+    @DisplayName("should return empty when tag not found by name ignore case")
     void shouldReturnEmptyWhenTagNotFoundByNameIgnoreCase() {
         // Arrange
         String nonExistentName = "NonExistentTag";
@@ -51,7 +51,7 @@ public class TagRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldReturnTrueWhenTagExistsByNameIgnoreCase")
+    @DisplayName("should return true when tag exists by name ignore case")
     void shouldReturnTrueWhenTagExistsByNameIgnoreCase() {
         // Arrange
         String tagName = "Spring";
@@ -66,7 +66,7 @@ public class TagRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldReturnFalseWhenTagDoesNotExistByNameIgnoreCase")
+    @DisplayName("should return false when tag does not exist by name ignore case")
     void shouldReturnFalseWhenTagDoesNotExistByNameIgnoreCase() {
         // Arrange
         String nonExistentName = "NonExistentTag";
@@ -79,7 +79,7 @@ public class TagRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldReturnTrueWhenTagExistsWithExactName")
+    @DisplayName("should return true when tag exists with exact name")
     void shouldReturnTrueWhenTagExistsWithExactName() {
         // Arrange
         String tagName = "JavaScript";
@@ -94,7 +94,7 @@ public class TagRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldReturnTrueWhenTagExistsWithDifferentCase")
+    @DisplayName("should return true when tag exists with different case")
     void shouldReturnTrueWhenTagExistsWithDifferentCase() {
         // Arrange
         String tagName = "TypeScript";
@@ -110,7 +110,7 @@ public class TagRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldReturnFalseWhenTagDoesNotExist")
+    @DisplayName("should return false when tag does not exist")
     void shouldReturnFalseWhenTagDoesNotExist() {
         // Arrange
         String nonExistentName = "NonExistentTag";
@@ -123,7 +123,7 @@ public class TagRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldReturnFalseWhenSearchingWithDifferentCaseForNonExistentTag")
+    @DisplayName("should return false when searching with different case for non existent tag")
     void shouldReturnFalseWhenSearchingWithDifferentCaseForNonExistentTag() {
         // Arrange
         String searchName = "nonexistenttag";
@@ -136,7 +136,7 @@ public class TagRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldReturnTrueWhenMultipleTagsExistAndOneMatches")
+    @DisplayName("should return true when multiple tags exist and one matches")
     void shouldReturnTrueWhenMultipleTagsExistAndOneMatches() {
         // Arrange
         Tag javaTag = Tag.builder().name("Java").build();
@@ -153,7 +153,7 @@ public class TagRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldReturnFalseWhenEmptyDatabase")
+    @DisplayName("should return false when empty database")
     void shouldReturnFalseWhenEmptyDatabase() {
         // Arrange - database is empty from setup
 
@@ -165,7 +165,7 @@ public class TagRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldSaveAndFindTag")
+    @DisplayName("should save and find tag")
     void shouldSaveAndFindTag() {
         // Arrange
         Tag tag = Tag.builder().name("TestTag").build();
@@ -180,7 +180,7 @@ public class TagRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldDeleteTagById")
+    @DisplayName("should delete tag by id")
     void shouldDeleteTagById() {
         // Arrange
         Tag tag = Tag.builder().name("Tag to delete").build();
@@ -194,7 +194,7 @@ public class TagRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldUpdateTagName")
+    @DisplayName("should update tag name")
     void shouldUpdateTagName() {
         // Arrange
         Tag tag = Tag.builder().name("Old Tag Name").build();
@@ -209,7 +209,7 @@ public class TagRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldFindAllTags")
+    @DisplayName("should find all tags")
     void shouldFindAllTags() {
         // Arrange
         Tag tag1 = Tag.builder().name("Tag1").build();
@@ -226,7 +226,7 @@ public class TagRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldReturnEmptyListWhenNoTagsExist")
+    @DisplayName("should return empty list when no tags exist")
     void shouldReturnEmptyListWhenNoTagsExist() {
         // Act
         List<Tag> tags = tagRepository.findAll();
@@ -236,7 +236,7 @@ public class TagRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldFindTagByNameCaseInsensitive")
+    @DisplayName("should find tag by name case insensitive")
     void shouldFindTagByNameCaseInsensitive() {
         // Arrange
         Tag tag = Tag.builder().name("CaseSensitiveTag").build();
@@ -251,7 +251,7 @@ public class TagRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldNotFindTagWithDifferentName")
+    @DisplayName("should not find tag with different name")
     void shouldNotFindTagWithDifferentName() {
         // Arrange
         Tag tag = Tag.builder().name("ExistingTag").build();

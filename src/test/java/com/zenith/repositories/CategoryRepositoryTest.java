@@ -21,7 +21,7 @@ public class CategoryRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldReturnTrueWhenCategoryExistsWithExactName")
+    @DisplayName("should return true when category exists with exact name")
     void shouldReturnTrueWhenCategoryExistsWithExactName() {
         // Arrange
         String categoryName = "Technology";
@@ -36,7 +36,7 @@ public class CategoryRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldReturnTrueWhenCategoryExistsWithDifferentCase")
+    @DisplayName("should return true when category exists with different case")
     void shouldReturnTrueWhenCategoryExistsWithDifferentCase() {
         // Arrange
         String categoryName = "Technology";
@@ -52,7 +52,7 @@ public class CategoryRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldReturnFalseWhenCategoryDoesNotExist")
+    @DisplayName("should return false when category does not exist")
     void shouldReturnFalseWhenCategoryDoesNotExist() {
         // Arrange
         String nonExistentName = "NonExistentCategory";
@@ -65,7 +65,7 @@ public class CategoryRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldReturnFalseWhenSearchingWithDifferentCaseForNonExistentCategory")
+    @DisplayName("should return false when searching with different case for non existent category")
     void shouldReturnFalseWhenSearchingWithDifferentCaseForNonExistentCategory() {
         // Arrange
         String searchName = "nonexistentcategory";
@@ -78,7 +78,7 @@ public class CategoryRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldReturnTrueWhenMultipleCategoriesExistAndOneMatches")
+    @DisplayName("should return true when multiple categories exist and one matches")
     void shouldReturnTrueWhenMultipleCategoriesExistAndOneMatches() {
         // Arrange
         Category techCategory = Category.builder().name("Technology").build();
@@ -95,7 +95,7 @@ public class CategoryRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldReturnFalseWhenEmptyDatabase")
+    @DisplayName("should return false when empty database")
     void shouldReturnFalseWhenEmptyDatabase() {
         // Arrange - database is empty from setup
 

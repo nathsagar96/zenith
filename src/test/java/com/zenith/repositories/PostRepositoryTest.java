@@ -64,7 +64,7 @@ public class PostRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldFindPostsByAuthorId")
+    @DisplayName("should find posts by author id")
     void shouldFindPostsByAuthorId() {
         // Arrange
         Post post1 = Post.builder()
@@ -97,7 +97,7 @@ public class PostRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldReturnEmptyPageWhenNoPostsFoundByAuthorId")
+    @DisplayName("should return empty page when no posts found by author id")
     void shouldReturnEmptyPageWhenNoPostsFoundByAuthorId() {
         // Arrange
         Pageable pageable = PageRequest.of(0, 10);
@@ -111,7 +111,7 @@ public class PostRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldFindPostsByAuthorIdAndStatus")
+    @DisplayName("should find posts by author id and status")
     void shouldFindPostsByAuthorIdAndStatus() {
         // Arrange
         Post publishedPost = Post.builder()
@@ -143,7 +143,7 @@ public class PostRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldReturnEmptyPageWhenNoPostsFoundByAuthorIdAndStatus")
+    @DisplayName("should return empty page when no posts found by author id and status")
     void shouldReturnEmptyPageWhenNoPostsFoundByAuthorIdAndStatus() {
         // Arrange
         Post draftPost = Post.builder()
@@ -166,7 +166,7 @@ public class PostRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldFindPostsByCategoryId")
+    @DisplayName("should find posts by category id")
     void shouldFindPostsByCategoryId() {
         // Arrange
         Category anotherCategory = Category.builder().name("Sports").build();
@@ -201,7 +201,7 @@ public class PostRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldReturnEmptyPageWhenNoPostsFoundByCategoryId")
+    @DisplayName("should return empty page when no posts found by category id")
     void shouldReturnEmptyPageWhenNoPostsFoundByCategoryId() {
         // Arrange
         Pageable pageable = PageRequest.of(0, 10);
@@ -215,7 +215,7 @@ public class PostRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldFindPostsByTagsName")
+    @DisplayName("should find posts by tags name")
     void shouldFindPostsByTagsName() {
         // Arrange
         Tag anotherTag = Tag.builder().name("Spring").build();
@@ -252,7 +252,7 @@ public class PostRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldReturnEmptyPageWhenNoPostsFoundByTagsName")
+    @DisplayName("should return empty page when no posts found by tags name")
     void shouldReturnEmptyPageWhenNoPostsFoundByTagsName() {
         // Arrange
         Pageable pageable = PageRequest.of(0, 10);
@@ -265,7 +265,7 @@ public class PostRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldFindPostsByStatus")
+    @DisplayName("should find posts by status")
     void shouldFindPostsByStatus() {
         // Arrange
         Post publishedPost = Post.builder()
@@ -297,7 +297,7 @@ public class PostRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldReturnEmptyPageWhenNoPostsFoundByStatus")
+    @DisplayName("should return empty page when no posts found by status")
     void shouldReturnEmptyPageWhenNoPostsFoundByStatus() {
         // Arrange
         Pageable pageable = PageRequest.of(0, 10);
@@ -310,7 +310,7 @@ public class PostRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldFindPublishedPosts")
+    @DisplayName("should find published posts")
     void shouldFindPublishedPosts() {
         // Arrange
         Post publishedPost = Post.builder()
@@ -342,7 +342,7 @@ public class PostRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldReturnEmptyPageWhenNoPublishedPosts")
+    @DisplayName("should return empty page when no published posts")
     void shouldReturnEmptyPageWhenNoPublishedPosts() {
         // Arrange
         Post draftPost = Post.builder()
@@ -365,7 +365,7 @@ public class PostRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldDeleteArchivedPostsOlderThanCutoffDate")
+    @DisplayName("should delete archived posts older than cutoff date")
     void shouldDeleteArchivedPostsOlderThanCutoffDate() {
         // Arrange
         LocalDateTime futureCutoffDate = LocalDateTime.now().plusDays(1);
@@ -398,7 +398,7 @@ public class PostRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldReturnZeroWhenNoArchivedPostsToDelete")
+    @DisplayName("should return zero when no archived posts to delete")
     void shouldReturnZeroWhenNoArchivedPostsToDelete() {
         // Arrange
         LocalDateTime cutoffDate = LocalDateTime.now().minusDays(30);
@@ -422,7 +422,7 @@ public class PostRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldDeleteArchivedPostsOlderThanDays")
+    @DisplayName("should delete archived posts older than days")
     void shouldDeleteArchivedPostsOlderThanDays() {
         // Arrange
         Post archivedPost = Post.builder()
@@ -444,7 +444,7 @@ public class PostRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldSaveAndFindPost")
+    @DisplayName("should save and find post")
     void shouldSaveAndFindPost() {
         // Arrange
         Post post = Post.builder()
@@ -471,7 +471,7 @@ public class PostRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldDeletePostById")
+    @DisplayName("should delete post by id")
     void shouldDeletePostById() {
         // Arrange
         Post post = Post.builder()
@@ -491,7 +491,7 @@ public class PostRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldUpdatePostStatus")
+    @DisplayName("should update post status")
     void shouldUpdatePostStatus() {
         // Arrange
         Post post = Post.builder()
@@ -512,7 +512,7 @@ public class PostRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldFindAllPosts")
+    @DisplayName("should find all posts")
     void shouldFindAllPosts() {
         // Arrange
         Post post1 = Post.builder()
@@ -541,7 +541,7 @@ public class PostRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldReturnEmptyListWhenNoPostsExist")
+    @DisplayName("should return empty list when no posts exist")
     void shouldReturnEmptyListWhenNoPostsExist() {
         // Act
         List<Post> posts = postRepository.findAll();
@@ -551,7 +551,7 @@ public class PostRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldHandlePostWithTagsRelationship")
+    @DisplayName("should handle post with tags relationship")
     void shouldHandlePostWithTagsRelationship() {
         // Arrange
         Tag tag1 = Tag.builder().name("Java").build();

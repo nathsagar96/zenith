@@ -58,7 +58,7 @@ public class CategoryServiceTest {
     }
 
     @Test
-    @DisplayName("shouldValidateSortParamsSuccessfullyWhenValid")
+    @DisplayName("should validate sort params successfully when valid")
     void shouldValidateSortParamsSuccessfullyWhenValid() {
         // Act & Assert
         assertDoesNotThrow(() -> {
@@ -69,7 +69,7 @@ public class CategoryServiceTest {
     }
 
     @Test
-    @DisplayName("shouldThrowValidationExceptionWhenSortFieldIsInvalid")
+    @DisplayName("should throw validation exception when sort field is invalid")
     void shouldThrowValidationExceptionWhenSortFieldIsInvalid() {
         // Act & Assert
         ValidationException exception = assertThrows(
@@ -79,7 +79,7 @@ public class CategoryServiceTest {
     }
 
     @Test
-    @DisplayName("shouldThrowValidationExceptionWhenSortDirectionIsInvalid")
+    @DisplayName("should throw validation exception when sort direction is invalid")
     void shouldThrowValidationExceptionWhenSortDirectionIsInvalid() {
         // Act & Assert
         ValidationException exception = assertThrows(
@@ -89,7 +89,7 @@ public class CategoryServiceTest {
     }
 
     @Test
-    @DisplayName("shouldGetAllCategoriesSuccessfully")
+    @DisplayName("should get all categories successfully")
     void shouldGetAllCategoriesSuccessfully() {
         // Arrange
         Page<Category> categoryPage = new PageImpl<>(List.of(category));
@@ -113,7 +113,7 @@ public class CategoryServiceTest {
     }
 
     @Test
-    @DisplayName("shouldGetCategoryByIdSuccessfully")
+    @DisplayName("should get category by id successfully")
     void shouldGetCategoryByIdSuccessfully() {
         // Arrange
         when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(category));
@@ -131,7 +131,7 @@ public class CategoryServiceTest {
     }
 
     @Test
-    @DisplayName("shouldThrowResourceNotFoundExceptionWhenCategoryNotFound")
+    @DisplayName("should throw resource not found exception when category not found")
     void shouldThrowResourceNotFoundExceptionWhenCategoryNotFound() {
         // Arrange
         when(categoryRepository.findById(categoryId)).thenReturn(Optional.empty());
@@ -144,7 +144,7 @@ public class CategoryServiceTest {
     }
 
     @Test
-    @DisplayName("shouldCreateCategorySuccessfully")
+    @DisplayName("should create category successfully")
     void shouldCreateCategorySuccessfully() {
         // Arrange
         when(categoryRepository.existsByNameIgnoreCase(categoryRequest.name())).thenReturn(false);
@@ -166,7 +166,7 @@ public class CategoryServiceTest {
     }
 
     @Test
-    @DisplayName("shouldThrowDuplicateResourceExceptionWhenCreatingCategoryWithDuplicateName")
+    @DisplayName("should throw duplicate resource exception when creating category with duplicate name")
     void shouldThrowDuplicateResourceExceptionWhenCreatingCategoryWithDuplicateName() {
         // Arrange
         when(categoryRepository.existsByNameIgnoreCase(categoryRequest.name())).thenReturn(true);
@@ -180,7 +180,7 @@ public class CategoryServiceTest {
     }
 
     @Test
-    @DisplayName("shouldUpdateCategorySuccessfully")
+    @DisplayName("should update category successfully")
     void shouldUpdateCategorySuccessfully() {
         // Arrange
         CategoryRequest updateRequest = new CategoryRequest("Updated Category");
@@ -206,7 +206,7 @@ public class CategoryServiceTest {
     }
 
     @Test
-    @DisplayName("shouldThrowResourceNotFoundExceptionWhenUpdatingNonExistentCategory")
+    @DisplayName("should throw resource not found exception when updating non existent category")
     void shouldThrowResourceNotFoundExceptionWhenUpdatingNonExistentCategory() {
         // Arrange
         CategoryRequest updateRequest = new CategoryRequest("Updated Category");
@@ -221,7 +221,7 @@ public class CategoryServiceTest {
     }
 
     @Test
-    @DisplayName("shouldThrowDuplicateResourceExceptionWhenUpdatingCategoryWithDuplicateName")
+    @DisplayName("should throw duplicate resource exception when updating category with duplicate name")
     void shouldThrowDuplicateResourceExceptionWhenUpdatingCategoryWithDuplicateName() {
         // Arrange
         CategoryRequest updateRequest = new CategoryRequest("Duplicate Category");
@@ -237,7 +237,7 @@ public class CategoryServiceTest {
     }
 
     @Test
-    @DisplayName("shouldDeleteCategorySuccessfully")
+    @DisplayName("should delete category successfully")
     void shouldDeleteCategorySuccessfully() {
         // Arrange
         when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(category));
@@ -250,7 +250,7 @@ public class CategoryServiceTest {
     }
 
     @Test
-    @DisplayName("shouldThrowResourceNotFoundExceptionWhenDeletingNonExistentCategory")
+    @DisplayName("should throw resource not found exception when deleting non existent category")
     void shouldThrowResourceNotFoundExceptionWhenDeletingNonExistentCategory() {
         // Arrange
         when(categoryRepository.findById(categoryId)).thenReturn(Optional.empty());
@@ -263,7 +263,7 @@ public class CategoryServiceTest {
     }
 
     @Test
-    @DisplayName("shouldThrowValidationExceptionWhenDeletingCategoryWithPosts")
+    @DisplayName("should throw validation exception when deleting category with posts")
     void shouldThrowValidationExceptionWhenDeletingCategoryWithPosts() {
         // Arrange
         Category categoryWithPosts = Category.builder().name("Test Category").build();

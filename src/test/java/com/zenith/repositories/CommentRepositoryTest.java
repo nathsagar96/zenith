@@ -67,7 +67,7 @@ public class CommentRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldFindCommentsByPostIdAndStatus")
+    @DisplayName("should find comments by post id and status")
     void shouldFindCommentsByPostIdAndStatus() {
         // Arrange
         Comment approvedComment = Comment.builder()
@@ -99,7 +99,7 @@ public class CommentRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldReturnEmptyPageWhenNoCommentsFoundByPostIdAndStatus")
+    @DisplayName("should return empty page when no comments found by post id and status")
     void shouldReturnEmptyPageWhenNoCommentsFoundByPostIdAndStatus() {
         // Arrange
         Pageable pageable = PageRequest.of(0, 10);
@@ -113,7 +113,7 @@ public class CommentRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldFindCommentsByStatus")
+    @DisplayName("should find comments by status")
     void shouldFindCommentsByStatus() {
         // Arrange
         Comment approvedComment1 = Comment.builder()
@@ -150,7 +150,7 @@ public class CommentRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldReturnEmptyPageWhenNoCommentsFoundByStatus")
+    @DisplayName("should return empty page when no comments found by status")
     void shouldReturnEmptyPageWhenNoCommentsFoundByStatus() {
         // Arrange
         Pageable pageable = PageRequest.of(0, 10);
@@ -163,7 +163,7 @@ public class CommentRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldDeleteArchivedCommentsOlderThanCutoffDate")
+    @DisplayName("should delete archived comments older than cutoff date")
     void shouldDeleteArchivedCommentsOlderThanCutoffDate() {
         // Arrange
         LocalDateTime futureCutoffDate = LocalDateTime.now().plusDays(1);
@@ -195,7 +195,7 @@ public class CommentRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldReturnZeroWhenNoArchivedCommentsToDelete")
+    @DisplayName("should return zero when no archived comments to delete")
     void shouldReturnZeroWhenNoArchivedCommentsToDelete() {
         // Arrange
         LocalDateTime cutoffDate = LocalDateTime.now().minusDays(30);
@@ -218,7 +218,7 @@ public class CommentRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldDeleteArchivedCommentsOlderThanDays")
+    @DisplayName("should delete archived comments older than days")
     void shouldDeleteArchivedCommentsOlderThanDays() {
         // Arrange
         Comment archivedComment = Comment.builder()
@@ -239,7 +239,7 @@ public class CommentRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldSaveAndFindComment")
+    @DisplayName("should save and find comment")
     void shouldSaveAndFindComment() {
         // Arrange
         Comment comment = Comment.builder()
@@ -262,7 +262,7 @@ public class CommentRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldDeleteCommentById")
+    @DisplayName("should delete comment by id")
     void shouldDeleteCommentById() {
         // Arrange
         Comment comment = Comment.builder()
@@ -281,7 +281,7 @@ public class CommentRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldUpdateCommentStatus")
+    @DisplayName("should update comment status")
     void shouldUpdateCommentStatus() {
         // Arrange
         Comment comment = Comment.builder()
@@ -301,7 +301,7 @@ public class CommentRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldFindAllComments")
+    @DisplayName("should find all comments")
     void shouldFindAllComments() {
         // Arrange
         Comment comment1 = Comment.builder()
@@ -328,7 +328,7 @@ public class CommentRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("shouldReturnEmptyListWhenNoCommentsExist")
+    @DisplayName("should return empty list when no comments exist")
     void shouldReturnEmptyListWhenNoCommentsExist() {
         // Act
         List<Comment> comments = commentRepository.findAll();
