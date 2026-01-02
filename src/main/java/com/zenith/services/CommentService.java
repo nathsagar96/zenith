@@ -17,7 +17,6 @@ import com.zenith.mappers.CommentMapper;
 import com.zenith.repositories.CommentRepository;
 import com.zenith.repositories.PostRepository;
 import com.zenith.repositories.UserRepository;
-import com.zenith.utils.SecurityUtils;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +34,7 @@ public class CommentService {
     private final UserRepository userRepository;
     private final CommentMapper commentMapper;
 
-    public static List<String> ALLOWED_SORT_FIELDS = List.of("createdAt", "updatedAt");
+    public static List<String> ALLOWED_SORT_FIELDS = List.of("createdat", "updatedat");
 
     public void validateSortParams(String sortBy, String sortDirection) {
         if (!ALLOWED_SORT_FIELDS.contains(sortBy.toLowerCase())) {
@@ -61,16 +60,16 @@ public class CommentService {
     }
 
     @Transactional
-    public CommentResponse createComment(UUID postId, CreateCommentRequest request, String username) {
+    public CommentResponse createComment(String username, UUID postId, CreateCommentRequest request) {
+        User author = userRepository
+                .findByUsername(username)
+                .orElseThrow(() -> new UnauthorizedException("No authenticated user found"));
+
         Post post = postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException("Post not found"));
 
         if (post.getStatus() != PostStatus.PUBLISHED) {
             throw new ValidationException("Cannot comment on unpublished post");
         }
-
-        User author = userRepository
-                .findByUsername(username)
-                .orElseThrow(() -> new UnauthorizedException("No authenticated user found"));
 
         Comment newComment = commentMapper.toEntity(request);
         newComment.setPost(post);
@@ -80,21 +79,25 @@ public class CommentService {
     }
 
     @Transactional
-    public CommentResponse updateComment(UUID commentId, UpdateCommentRequest request) {
+    public CommentResponse updateComment(String username, UUID commentId, UpdateCommentRequest request) {
+        User user = userRepository
+                .findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("No authenticated user found"));
         Comment existingComment = findById(commentId);
-        checkOwnership(existingComment);
+        checkOwnership(user, existingComment);
         existingComment.setContent(request.content());
 
         return commentMapper.toResponse(commentRepository.save(existingComment));
     }
 
     @Transactional
-    public void deleteComment(UUID commentId) {
+    public void deleteComment(String username, UUID commentId) {
+        User user = userRepository
+                .findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("No authenticated user found"));
         Comment existingComment = findById(commentId);
-        checkOwnership(existingComment);
-        existingComment.setStatus(CommentStatus.ARCHIVED);
-
-        commentRepository.save(existingComment);
+        checkOwnership(user, existingComment);
+        commentRepository.deleteById(commentId);
     }
 
     @Transactional
@@ -104,32 +107,15 @@ public class CommentService {
         return commentMapper.toResponse(commentRepository.save(existingComment));
     }
 
-    @Transactional
-    public List<CommentResponse> bulkUpdateCommentStatus(List<UUID> commentIds, CommentStatus status) {
-        List<Comment> comments = commentRepository.findAllById(commentIds);
-        comments.forEach(comment -> comment.setStatus(status));
-        return commentRepository.saveAll(comments).stream()
-                .map(commentMapper::toResponse)
-                .toList();
-    }
-
-    public boolean isOwner(UUID commentId, String username) {
-        return commentRepository
-                .findById(commentId)
-                .map(c -> c.getAuthor().getUsername().equals(username))
-                .orElse(false);
-    }
-
     private Comment findById(UUID commentId) {
         return commentRepository
                 .findById(commentId)
                 .orElseThrow(() -> new ResourceNotFoundException("Comment not found"));
     }
 
-    private void checkOwnership(Comment comment) {
-        String username = SecurityUtils.getCurrentUsername();
-        if (!comment.getAuthor().getUsername().equals(username) && !SecurityUtils.isAdmin()) {
-            throw new ForbiddenException("You can only edit your own comments");
+    private void checkOwnership(User user, Comment comment) {
+        if (!comment.getAuthor().getUsername().equals(user.getUsername()) && !user.isAdmin() && !user.isModerator()) {
+            throw new ForbiddenException("You are not allowed to edit / delete this comment");
         }
     }
 

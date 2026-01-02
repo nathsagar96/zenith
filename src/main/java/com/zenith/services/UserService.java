@@ -12,7 +12,6 @@ import com.zenith.exceptions.UnauthorizedException;
 import com.zenith.exceptions.ValidationException;
 import com.zenith.mappers.UserMapper;
 import com.zenith.repositories.UserRepository;
-import com.zenith.utils.SecurityUtils;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +31,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     public static List<String> ALLOWED_SORT_FIELDS =
-            List.of("username", "email", "firstName", "lastName", "createdAt", "updatedAt");
+            List.of("username", "email", "firstname", "lastname", "createdat", "updatedat");
 
     public void validateSortParams(String sortBy, String sortDirection) {
         if (!ALLOWED_SORT_FIELDS.contains(sortBy.toLowerCase())) {
@@ -71,13 +70,12 @@ public class UserService {
     }
 
     @Transactional
-    public UserResponse updateUser(UUID userId, UpdateUserRequest request) {
-        String currentUsername = SecurityUtils.getCurrentUsername();
+    public UserResponse updateUser(String username, UUID userId, UpdateUserRequest request) {
         User currentUser = userRepository
-                .findByUsername(currentUsername)
+                .findByUsername(username)
                 .orElseThrow(() -> new UnauthorizedException("No authenticated user found"));
 
-        if (!currentUser.getId().equals(userId) && !SecurityUtils.isAdmin()) {
+        if (!currentUser.getId().equals(userId) && !RoleType.ADMIN.equals(currentUser.getRole())) {
             throw new ForbiddenException("You can not update the profile");
         }
 

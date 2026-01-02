@@ -15,7 +15,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -25,9 +24,9 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/admin")
-@Tag(name = "Admin", description = "Admin operations for managing posts and comments")
-public class AdminController {
+@RequestMapping("/api/v1/moderator")
+@Tag(name = "Moderator", description = "Moderator operations for managing posts and comments")
+public class ModeratorController {
     private final PostService postService;
     private final CommentService commentService;
 
@@ -159,26 +158,5 @@ public class AdminController {
                     UUID commentId,
             @Parameter(description = "Status to set", required = true) @RequestParam("status") CommentStatus status) {
         return commentService.updateCommentStatus(commentId, status);
-    }
-
-    @Operation(
-            summary = "Bulk update comment statuses",
-            description = "Update the status of multiple comments at once",
-            responses = {
-                @ApiResponse(
-                        responseCode = "200",
-                        description = "Successful bulk update",
-                        content =
-                                @Content(
-                                        mediaType = "application/json",
-                                        schema = @Schema(implementation = CommentResponse.class, type = "array")))
-            })
-    @PatchMapping("/comments/bulk-status")
-    @ResponseStatus(HttpStatus.OK)
-    public List<CommentResponse> updateCommentsStatus(
-            @Parameter(description = "List of comment IDs to update", required = true) @RequestBody
-                    List<UUID> commentIds,
-            @Parameter(description = "Status to set", required = true) @RequestParam("status") CommentStatus status) {
-        return commentService.bulkUpdateCommentStatus(commentIds, status);
     }
 }

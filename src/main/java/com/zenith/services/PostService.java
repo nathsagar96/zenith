@@ -1,5 +1,7 @@
 package com.zenith.services;
 
+import static com.zenith.enums.PostStatus.PUBLISHED;
+
 import com.zenith.dtos.requests.CreatePostRequest;
 import com.zenith.dtos.requests.UpdatePostRequest;
 import com.zenith.dtos.responses.PageResponse;
@@ -18,7 +20,6 @@ import com.zenith.repositories.CategoryRepository;
 import com.zenith.repositories.PostRepository;
 import com.zenith.repositories.TagRepository;
 import com.zenith.repositories.UserRepository;
-import com.zenith.utils.SecurityUtils;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -41,7 +42,7 @@ public class PostService {
     private final UserRepository userRepository;
     private final PostMapper postMapper;
 
-    public static List<String> ALLOWED_SORT_FIELDS = List.of("title", "createdAt", "updatedAt");
+    public static List<String> ALLOWED_SORT_FIELDS = List.of("title", "createdat", "updatedat");
 
     public void validateSortParams(String sortBy, String sortDirection) {
         if (!ALLOWED_SORT_FIELDS.contains(sortBy.toLowerCase())) {
@@ -65,8 +66,7 @@ public class PostService {
         return buildPageResponse(posts);
     }
 
-    public PageResponse<PostResponse> getMyPosts(PostStatus status, Pageable pageable) {
-        String username = SecurityUtils.getCurrentUsername();
+    public PageResponse<PostResponse> getMyPosts(String username, PostStatus status, Pageable pageable) {
         User author = userRepository
                 .findByUsername(username)
                 .orElseThrow(() -> new UnauthorizedException("No authenticated user found"));
@@ -86,23 +86,30 @@ public class PostService {
         return buildPageResponse(posts);
     }
 
-    public PostResponse getPostById(UUID postId) {
+    public PostResponse getPostById(String username, UUID postId) {
         Post post = findById(postId);
 
-        if (post.getStatus() != PostStatus.PUBLISHED && !hasAccess(post)) {
-            throw new ForbiddenException("You do not have permission to view this post");
+        if (PUBLISHED.equals(post.getStatus())) {
+            return postMapper.toResponse(post);
         }
 
+        User user = userRepository
+                .findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("No authenticated user found"));
+
+        if (!hasAccess(user, post)) {
+            throw new ForbiddenException("You are not allowed to view this post");
+        }
         return postMapper.toResponse(post);
     }
 
     @Transactional
-    public PostResponse createPost(CreatePostRequest request, String username) {
-        Post newPost = postMapper.toEntity(request);
-
+    public PostResponse createPost(String username, CreatePostRequest request) {
         User author = userRepository
                 .findByUsername(username)
                 .orElseThrow(() -> new UnauthorizedException("No authenticated user found"));
+
+        Post newPost = postMapper.toEntity(request);
         newPost.setAuthor(author);
 
         Category category = categoryRepository
@@ -117,9 +124,13 @@ public class PostService {
     }
 
     @Transactional
-    public PostResponse updatePost(UUID postId, UpdatePostRequest request) {
+    public PostResponse updatePost(String username, UUID postId, UpdatePostRequest request) {
+        User user = userRepository
+                .findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("No authenticated user found"));
+
         Post existingPost = findById(postId);
-        checkOwnership(existingPost);
+        checkOwnership(user, existingPost);
 
         if (request.title() != null && !request.title().isBlank()) {
             existingPost.setTitle(request.title());
@@ -145,40 +156,20 @@ public class PostService {
     }
 
     @Transactional
-    public void deletePost(UUID postId) {
+    public void deletePost(String username, UUID postId) {
+        User user = userRepository
+                .findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("No authenticated user found"));
         Post exitsingPost = findById(postId);
-        checkOwnership(exitsingPost);
-        exitsingPost.setStatus(PostStatus.ARCHIVED);
-
-        postRepository.save(exitsingPost);
-    }
-
-    @Transactional
-    public PostResponse publishPost(UUID postId) {
-        Post existingPost = findById(postId);
-        checkOwnership(existingPost);
-        existingPost.setStatus(PostStatus.PUBLISHED);
-
-        return postMapper.toResponse(postRepository.save(existingPost));
+        checkOwnership(user, exitsingPost);
+        postRepository.deleteById(postId);
     }
 
     @Transactional
     public PostResponse updatePostStatus(UUID postId, PostStatus status) {
-        if (!SecurityUtils.isAdmin()) {
-            throw new ForbiddenException("Only admin can change post status");
-        }
-
         Post existingPost = findById(postId);
         existingPost.setStatus(status);
-
         return postMapper.toResponse(postRepository.save(existingPost));
-    }
-
-    public boolean isOwner(UUID postId, String username) {
-        return postRepository
-                .findById(postId)
-                .map(p -> p.getAuthor().getUsername().equals(username))
-                .orElse(false);
     }
 
     private Post findById(UUID postId) {
@@ -194,18 +185,14 @@ public class PostService {
                 .collect(Collectors.toSet());
     }
 
-    private void checkOwnership(Post post) {
-        String username = SecurityUtils.getCurrentUsername();
-
-        if (!post.getAuthor().getUsername().equals(username) && !SecurityUtils.isAdmin()) {
-            throw new ForbiddenException("You can only edit your own posts");
+    private void checkOwnership(User user, Post post) {
+        if (!hasAccess(user, post)) {
+            throw new ForbiddenException("You are not allowed to edit / delete this post");
         }
     }
 
-    private boolean hasAccess(Post post) {
-        String username = SecurityUtils.getCurrentUsername();
-
-        return post.getAuthor().getUsername().equals(username) || SecurityUtils.isAdmin();
+    private boolean hasAccess(User user, Post post) {
+        return post.getAuthor().getUsername().equals(user.getUsername()) || user.isAdmin() || user.isModerator();
     }
 
     private PageResponse<PostResponse> buildPageResponse(Page<Post> posts) {

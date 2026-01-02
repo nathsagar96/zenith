@@ -23,7 +23,7 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
 
-    public static List<String> ALLOWED_SORT_FIELDS = List.of("name", "createdAt", "updatedAt");
+    public static List<String> ALLOWED_SORT_FIELDS = List.of("name", "createdat", "updatedat");
 
     public void validateSortParams(String sortBy, String sortDirection) {
         if (!ALLOWED_SORT_FIELDS.contains(sortBy.toLowerCase())) {

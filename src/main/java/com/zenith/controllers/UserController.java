@@ -4,6 +4,7 @@ import com.zenith.dtos.requests.UpdateUserRequest;
 import com.zenith.dtos.responses.PageResponse;
 import com.zenith.dtos.responses.UserResponse;
 import com.zenith.enums.RoleType;
+import com.zenith.security.SecurityUser;
 import com.zenith.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -20,7 +21,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -93,8 +94,8 @@ public class UserController {
     @GetMapping("/me")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("isAuthenticated()")
-    public UserResponse getCurrentUser(Authentication authentication) {
-        return userService.getCurrentUser(authentication.getName());
+    public UserResponse getCurrentUser(@AuthenticationPrincipal SecurityUser user) {
+        return userService.getCurrentUser(user.getUsername());
     }
 
     @Operation(
@@ -133,8 +134,9 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     public UserResponse updateUser(
             @Parameter(description = "ID of the user to update", required = true) @PathVariable("userId") UUID userId,
-            @Valid @RequestBody UpdateUserRequest request) {
-        return userService.updateUser(userId, request);
+            @Valid @RequestBody UpdateUserRequest request,
+            @AuthenticationPrincipal SecurityUser user) {
+        return userService.updateUser(user.getUsername(), userId, request);
     }
 
     @Operation(

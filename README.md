@@ -42,8 +42,7 @@ src/main/java/com/zenith/
 ├── mappers/              # MapStruct mappers
 ├── repositories/         # Spring Data repositories
 ├── security/             # Security configuration
-├── services/             # Business logic services
-└── utils/                # Utility classes
+└── services/             # Business logic services
 ```
 
 ## Setup Instructions
@@ -106,7 +105,7 @@ The application provides comprehensive REST APIs for all operations:
   {
     "username": "john_doe",
     "email": "john@example.com",
-    "password": "password123"
+    "password": "SecurePass123!"
   }
   ```
 
@@ -117,6 +116,7 @@ The application provides comprehensive REST APIs for all operations:
   Content-Type: application/json
 
   {
+    "username": "john_doe",
     "email": "john@example.com",
     "password": "password123"
   }
@@ -127,10 +127,10 @@ The application provides comprehensive REST APIs for all operations:
 - **Get all categories**
 
   ```http
-  GET /api/v1/categories?page=0&size=10&sortBy=createdAt&direction=desc
+  GET /api/v1/categories?page=0&size=10&sortBy=createdAt&sortDirection=DESC
   ```
 
-- **Create a new category (Admin only)**
+- **Create a new category**
 
   ```http
   POST /api/v1/categories
@@ -142,19 +142,37 @@ The application provides comprehensive REST APIs for all operations:
   }
   ```
 
-#### Posts
-
-- **Get all posts (Admin only)**
+- **Get category by ID**
 
   ```http
-  GET /api/v1/posts?page=0&size=10&sortBy=createdAt&direction=desc
+  GET /api/v1/categories/{categoryId}
+  ```
+
+- **Update a category**
+
+  ```http
+  PUT /api/v1/categories/{categoryId}
+  Content-Type: application/json
+  Authorization: Bearer {token}
+
+  {
+    "name": "Updated Category Name"
+  }
+  ```
+
+- **Delete a category**
+
+  ```http
+  DELETE /api/v1/categories/{categoryId}
   Authorization: Bearer {token}
   ```
 
-- **Get all public posts**
+#### Posts
+
+- **Get published posts**
 
   ```http
-  GET /api/v1/posts/public?page=0&size=10&sortBy=createdAt&direction=desc
+  GET /api/v1/posts?page=0&size=10&sortBy=createdAt&sortDirection=DESC&categoryId={categoryId}&tag={tag}
   ```
 
 - **Create a new post**
@@ -165,32 +183,215 @@ The application provides comprehensive REST APIs for all operations:
   Authorization: Bearer {token}
 
   {
-    "title": "My First Post",
-    "content": "This is the content of my post",
-    "category": "Technology",
-    "tags": ["Java", "Spring"]
+    "title": "Getting Started with Spring Boot",
+    "content": "This is the content of the post",
+    "categoryId": "123e4567-e89b-12d3-a456-426614174000",
+    "tags": ["spring", "java"]
   }
+  ```
+
+- **Get post by ID**
+
+  ```http
+  GET /api/v1/posts/{postId}
+  Authorization: Bearer {token}
+  ```
+
+- **Update a post**
+
+  ```http
+  PUT /api/v1/posts/{postId}
+  Content-Type: application/json
+  Authorization: Bearer {token}
+
+  {
+    "title": "Updated Title",
+    "content": "This is the updated content",
+    "categoryId": "123e4567-e89b-12d3-a456-426614174000",
+    "tags": ["spring", "java"]
+  }
+  ```
+
+- **Delete a post**
+
+  ```http
+  DELETE /api/v1/posts/{postId}
+  Authorization: Bearer {token}
+  ```
+
+- **Get current user's posts**
+
+  ```http
+  GET /api/v1/posts/my?page=0&size=10&sortBy=createdAt&sortDirection=DESC&status={status}
+  Authorization: Bearer {token}
   ```
 
 #### Comments
 
-- **Get approved comments for a post**
+- **Get comments for a post**
 
   ```http
-  GET /api/v1/comments/post/{postId}?page=0&size=10
+  GET /api/v1/posts/{postId}/comments?page=0&size=10&sortBy=createdAt&sortDirection=DESC
   ```
 
 - **Create a new comment**
 
   ```http
-  POST /api/v1/comments
+  POST /api/v1/posts/{postId}/comments
   Content-Type: application/json
   Authorization: Bearer {token}
 
   {
-    "content": "This is a great post!",
-    "postId": 1
+    "content": "This is a great post!"
   }
+  ```
+
+- **Update a comment**
+
+  ```http
+  PUT /api/v1/posts/{postId}/comments/{commentId}
+  Content-Type: application/json
+  Authorization: Bearer {token}
+
+  {
+    "content": "This is an updated comment"
+  }
+  ```
+
+- **Delete a comment**
+
+  ```http
+  DELETE /api/v1/posts/{postId}/comments/{commentId}
+  Authorization: Bearer {token}
+  ```
+
+#### Tags
+
+- **Get all tags**
+
+  ```http
+  GET /api/v1/tags?page=0&size=10&sortBy=createdAt&sortDirection=DESC
+  ```
+
+- **Create a new tag**
+
+  ```http
+  POST /api/v1/tags
+  Content-Type: application/json
+  Authorization: Bearer {token}
+
+  {
+    "name": "Spring Boot"
+  }
+  ```
+
+- **Get tag by ID**
+
+  ```http
+  GET /api/v1/tags/{tagId}
+  ```
+
+- **Update a tag**
+
+  ```http
+  PUT /api/v1/tags/{tagId}
+  Content-Type: application/json
+  Authorization: Bearer {token}
+
+  {
+    "name": "Updated Tag Name"
+  }
+  ```
+
+- **Delete a tag**
+
+  ```http
+  DELETE /api/v1/tags/{tagId}
+  Authorization: Bearer {token}
+  ```
+
+#### Users
+
+- **Get all users**
+
+  ```http
+  GET /api/v1/users?page=0&size=10&sortBy=createdAt&sortDirection=DESC&role={role}
+  Authorization: Bearer {token}
+  ```
+
+- **Get user by ID**
+
+  ```http
+  GET /api/v1/users/{userId}
+  Authorization: Bearer {token}
+  ```
+
+- **Get current user**
+
+  ```http
+  GET /api/v1/users/me
+  Authorization: Bearer {token}
+  ```
+
+- **Update a user**
+
+  ```http
+  PUT /api/v1/users/{userId}
+  Content-Type: application/json
+  Authorization: Bearer {token}
+
+  {
+    "username": "john_doe",
+    "email": "john@example.com",
+    "password": "newpassword123",
+    "firstName": "John",
+    "lastName": "Doe",
+    "bio": "Software Developer"
+  }
+  ```
+
+- **Delete a user**
+
+  ```http
+  DELETE /api/v1/users/{userId}
+  Authorization: Bearer {token}
+  ```
+
+- **Update user role**
+
+  ```http
+  PATCH /api/v1/users/{userId}/role?role={role}
+  Authorization: Bearer {token}
+  ```
+
+#### Moderator
+
+- **Get posts by status**
+
+  ```http
+  GET /api/v1/moderator/posts?page=0&size=10&sortBy=createdAt&sortDirection=DESC&status={status}
+  Authorization: Bearer {token}
+  ```
+
+- **Update post status**
+
+  ```http
+  PATCH /api/v1/moderator/posts/{postId}/status?status={status}
+  Authorization: Bearer {token}
+  ```
+
+- **Get comments by status**
+
+  ```http
+  GET /api/v1/moderator/comments?page=0&size=10&sortBy=createdAt&sortDirection=DESC&status={status}
+  Authorization: Bearer {token}
+  ```
+
+- **Update comment status**
+
+  ```http
+  PATCH /api/v1/moderator/comments/{commentId}/status?status={status}
+  Authorization: Bearer {token}
   ```
 
 ## API Documentation

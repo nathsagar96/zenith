@@ -5,6 +5,7 @@ import com.zenith.dtos.requests.UpdatePostRequest;
 import com.zenith.dtos.responses.PageResponse;
 import com.zenith.dtos.responses.PostResponse;
 import com.zenith.enums.PostStatus;
+import com.zenith.security.SecurityUser;
 import com.zenith.services.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -20,8 +21,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -92,14 +92,14 @@ public class PostController {
     @GetMapping("/{postId}")
     @ResponseStatus(HttpStatus.OK)
     public PostResponse getPostById(
-            @Parameter(description = "ID of the post to retrieve", required = true) @PathVariable("postId")
-                    UUID postId) {
-        return postService.getPostById(postId);
+            @Parameter(description = "ID of the post to retrieve", required = true) @PathVariable("postId") UUID postId,
+            @AuthenticationPrincipal SecurityUser user) {
+        return postService.getPostById(user.getUsername(), postId);
     }
 
     @Operation(
             summary = "Get current user's posts",
-            description = "Retrieve a paginated list of posts for the authenticated user (authors and admins only)",
+            description = "Retrieve a paginated list of posts for the authenticated user",
             parameters = {
                 @Parameter(
                         name = "page",
@@ -127,24 +127,24 @@ public class PostController {
             })
     @GetMapping("/my")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasAnyRole('AUTHOR', 'ADMIN')")
     public PageResponse<PostResponse> getMyPosts(
             @RequestParam(name = "page", required = false, defaultValue = "0") @Min(0) int page,
             @RequestParam(name = "size", required = false, defaultValue = "20") @Min(1) @Max(100) int size,
             @RequestParam(name = "sortBy", required = false, defaultValue = "createdAt") String sortBy,
             @RequestParam(name = "sortDirection", required = false, defaultValue = "ASC") String sortDirection,
-            @RequestParam(name = "status", required = false) PostStatus status) {
+            @RequestParam(name = "status", required = false) PostStatus status,
+            @AuthenticationPrincipal SecurityUser user) {
         postService.validateSortParams(sortBy, sortDirection);
         Sort sort = sortDirection.equalsIgnoreCase("asc")
                 ? Sort.by(sortBy).ascending()
                 : Sort.by(sortBy).descending();
         PageRequest pageable = PageRequest.of(page, size, sort);
-        return postService.getMyPosts(status, pageable);
+        return postService.getMyPosts(user.getUsername(), status, pageable);
     }
 
     @Operation(
             summary = "Create a new post",
-            description = "Create a new post (authors and admins only)",
+            description = "Create a new post",
             responses = {
                 @ApiResponse(
                         responseCode = "201",
@@ -156,14 +156,14 @@ public class PostController {
             })
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasAnyRole('AUTHOR', 'ADMIN')")
-    public PostResponse createPost(@Valid @RequestBody CreatePostRequest request, Authentication authentication) {
-        return postService.createPost(request, authentication.getName());
+    public PostResponse createPost(
+            @Valid @RequestBody CreatePostRequest request, @AuthenticationPrincipal SecurityUser user) {
+        return postService.createPost(user.getUsername(), request);
     }
 
     @Operation(
             summary = "Update a post",
-            description = "Update an existing post (owner or admin only)",
+            description = "Update an existing post by its ID",
             responses = {
                 @ApiResponse(
                         responseCode = "200",
@@ -175,43 +175,22 @@ public class PostController {
             })
     @PutMapping("/{postId}")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("@postService.isOwner(#postId, authentication.name) or hasRole('ADMIN')")
     public PostResponse updatePost(
             @Parameter(description = "ID of the post to update", required = true) @PathVariable("postId") UUID postId,
-            @Valid @RequestBody UpdatePostRequest request) {
-        return postService.updatePost(postId, request);
+            @Valid @RequestBody UpdatePostRequest request,
+            @AuthenticationPrincipal SecurityUser user) {
+        return postService.updatePost(user.getUsername(), postId, request);
     }
 
     @Operation(
             summary = "Delete a post",
-            description = "Delete a post by its ID (owner or admin only)",
+            description = "Delete a post by its ID",
             responses = {@ApiResponse(responseCode = "204", description = "Post deleted successfully")})
     @DeleteMapping("/{postId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("@postService.isOwner(#postId, authentication.name) or hasRole('ADMIN')")
     public void deletePost(
-            @Parameter(description = "ID of the post to delete", required = true) @PathVariable("postId") UUID postId) {
-        postService.deletePost(postId);
-    }
-
-    @Operation(
-            summary = "Publish a post",
-            description = "Publish a post (owner only)",
-            responses = {
-                @ApiResponse(
-                        responseCode = "200",
-                        description = "Post published successfully",
-                        content =
-                                @Content(
-                                        mediaType = "application/json",
-                                        schema = @Schema(implementation = PostResponse.class)))
-            })
-    @PatchMapping("/{postId}/publish")
-    @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("@postService.isOwner(#postId, authentication.name)")
-    public PostResponse publishPost(
-            @Parameter(description = "ID of the post to publish", required = true) @PathVariable("postId")
-                    UUID postId) {
-        return postService.publishPost(postId);
+            @Parameter(description = "ID of the post to delete", required = true) @PathVariable("postId") UUID postId,
+            @AuthenticationPrincipal SecurityUser user) {
+        postService.deletePost(user.getUsername(), postId);
     }
 }

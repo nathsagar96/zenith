@@ -47,4 +47,12 @@ public class User extends BaseEntity {
     @Builder.Default
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
+
+    public boolean isAdmin() {
+        return role == RoleType.ADMIN;
+    }
+
+    public boolean isModerator() {
+        return role == RoleType.MODERATOR;
+    }
 }

@@ -33,9 +33,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .authorizeHttpRequests(auth -> auth
-                        // Public
-                        .requestMatchers("/api/v1/auth/**")
+                .authorizeHttpRequests(auth -> auth.requestMatchers("/api/v1/auth/**")
                         .permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/posts", "/api/v1/posts/**")
                         .permitAll()
@@ -43,40 +41,10 @@ public class SecurityConfig {
                         .permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/tags", "/api/v1/tags/**")
                         .permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/posts/{postId}/comments")
-                        .permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html")
                         .permitAll()
-
-                        // Authenticated
-                        .requestMatchers(HttpMethod.POST, "/api/v1/posts/{postId}/comments")
-                        .authenticated()
-
-                        // Author
-                        .requestMatchers(HttpMethod.POST, "/api/v1/posts")
-                        .hasAnyRole("AUTHOR", "ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/v1/posts/**")
-                        .hasAnyRole("AUTHOR", "ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/v1/posts/**")
-                        .hasAnyRole("AUTHOR", "ADMIN")
-                        .requestMatchers(HttpMethod.PATCH, "/api/v1/posts/*/publish")
-                        .hasAnyRole("AUTHOR", "ADMIN")
-                        .requestMatchers("/api/v1/posts/my")
-                        .hasAnyRole("AUTHOR", "ADMIN")
-
-                        // Admin
-                        .requestMatchers("/api/v1/users/**")
-                        .hasRole("ADMIN")
-                        .requestMatchers("/api/v1/categories", "/api/v1/categories/**")
-                        .hasRole("ADMIN")
-                        .requestMatchers("/api/v1/tags", "/api/v1/tags/**")
-                        .hasRole("ADMIN")
-                        .requestMatchers("/api/v1/admin/**")
-                        .hasRole("ADMIN")
-                        .requestMatchers("/api/v1/comments/**")
-                        .hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PATCH, "/api/v1/posts/*/status")
-                        .hasRole("ADMIN")
+                        .requestMatchers("/api/v1/moderator/**")
+                        .hasAnyRole("ADMIN", "MODERATOR")
                         .anyRequest()
                         .authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

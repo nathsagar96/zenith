@@ -4,6 +4,7 @@ import com.zenith.dtos.requests.CreateCommentRequest;
 import com.zenith.dtos.requests.UpdateCommentRequest;
 import com.zenith.dtos.responses.CommentResponse;
 import com.zenith.dtos.responses.PageResponse;
+import com.zenith.security.SecurityUser;
 import com.zenith.services.CommentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -19,8 +20,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -76,7 +76,7 @@ public class CommentController {
 
     @Operation(
             summary = "Add a new comment",
-            description = "Create a new comment on a post (authenticated users only)",
+            description = "Create a new comment on a post",
             responses = {
                 @ApiResponse(
                         responseCode = "201",
@@ -88,18 +88,17 @@ public class CommentController {
             })
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("isAuthenticated()")
     public CommentResponse addComment(
             @Parameter(description = "ID of the post to comment on", required = true) @PathVariable("postId")
                     UUID postId,
             @Valid @RequestBody CreateCommentRequest request,
-            Authentication authentication) {
-        return commentService.createComment(postId, request, authentication.getName());
+            @AuthenticationPrincipal SecurityUser user) {
+        return commentService.createComment(user.getUsername(), postId, request);
     }
 
     @Operation(
             summary = "Update a comment",
-            description = "Update an existing comment (owner or admin only)",
+            description = "Update an existing comment",
             responses = {
                 @ApiResponse(
                         responseCode = "200",
@@ -111,24 +110,24 @@ public class CommentController {
             })
     @PutMapping("/{commentId}")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("@commentService.isOwner(#commentId, authentication.name) or hasRole('ADMIN')")
     public CommentResponse updateComment(
             @Parameter(description = "ID of the comment to update", required = true) @PathVariable("commentId")
                     UUID commentId,
-            @Valid @RequestBody UpdateCommentRequest request) {
-        return commentService.updateComment(commentId, request);
+            @Valid @RequestBody UpdateCommentRequest request,
+            @AuthenticationPrincipal SecurityUser user) {
+        return commentService.updateComment(user.getUsername(), commentId, request);
     }
 
     @Operation(
             summary = "Delete a comment",
-            description = "Delete a comment by its ID (owner or admin only)",
+            description = "Delete a comment by its ID",
             responses = {@ApiResponse(responseCode = "204", description = "Comment deleted successfully")})
     @DeleteMapping("/{commentId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("@commentService.isOwner(#commentId, authentication.name) or hasRole('ADMIN')")
     public void deleteComment(
             @Parameter(description = "ID of the comment to delete", required = true) @PathVariable("commentId")
-                    UUID commentId) {
-        commentService.deleteComment(commentId);
+                    UUID commentId,
+            @AuthenticationPrincipal SecurityUser user) {
+        commentService.deleteComment(user.getUsername(), commentId);
     }
 }
