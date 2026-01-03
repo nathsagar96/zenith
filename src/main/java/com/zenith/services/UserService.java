@@ -76,7 +76,7 @@ public class UserService {
                 .orElseThrow(() -> new UnauthorizedException("No authenticated user found"));
 
         if (!currentUser.getId().equals(userId) && !RoleType.ADMIN.equals(currentUser.getRole())) {
-            throw new ForbiddenException("You can not update the profile");
+            throw new ForbiddenException("You can not update this profile");
         }
 
         User existingUser = findById(userId);

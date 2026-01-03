@@ -132,6 +132,7 @@ public class UserController {
             })
     @PutMapping("/{userId}")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("isAuthenticated()")
     public UserResponse updateUser(
             @Parameter(description = "ID of the user to update", required = true) @PathVariable("userId") UUID userId,
             @Valid @RequestBody UpdateUserRequest request,
