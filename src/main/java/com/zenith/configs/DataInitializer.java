@@ -53,7 +53,7 @@ public class DataInitializer {
                     .build();
             johnDoe = userRepository.save(johnDoe);
 
-            // Create test users
+            // Create moderator user
             User aliceSmith = User.builder()
                     .username("alice_smith")
                     .email("alice.smith@example.com")
@@ -61,10 +61,11 @@ public class DataInitializer {
                     .firstName("Alice")
                     .lastName("Smith")
                     .bio("Passionate about technology and lifestyle. Loves to share insights and experiences.")
-                    .role(RoleType.USER)
+                    .role(RoleType.MODERATOR)
                     .build();
             aliceSmith = userRepository.save(aliceSmith);
 
+            // Create test user
             User bobJones = User.builder()
                     .username("bob_jones")
                     .email("bob.jones@example.com")
@@ -110,8 +111,8 @@ public class DataInitializer {
                     .build();
             adminArchivedPost = postRepository.save(adminArchivedPost);
 
-            // Create posts for test user 1
-            Post testUser1DraftPost = Post.builder()
+            // Create posts for moderator
+            Post moderatorDraftPost = Post.builder()
                     .title("My Morning Routine for Productivity")
                     .content(
                             "I've been experimenting with different morning routines to boost my productivity. Here's what works for me...")
@@ -120,9 +121,9 @@ public class DataInitializer {
                     .category(lifestyleCategory)
                     .tags(Set.of(lifestyleTag))
                     .build();
-            testUser1DraftPost = postRepository.save(testUser1DraftPost);
+            moderatorDraftPost = postRepository.save(moderatorDraftPost);
 
-            Post testUser1PublishedPost = Post.builder()
+            Post moderatorPublishedPost = Post.builder()
                     .title("10 Lifestyle Hacks for Better Work-Life Balance")
                     .content(
                             "In today's fast-paced world, maintaining work-life balance is crucial. Here are my top 10 tips...")
@@ -131,9 +132,9 @@ public class DataInitializer {
                     .category(lifestyleCategory)
                     .tags(Set.of(lifestyleTag))
                     .build();
-            testUser1PublishedPost = postRepository.save(testUser1PublishedPost);
+            moderatorPublishedPost = postRepository.save(moderatorPublishedPost);
 
-            Post testUser1ArchivedPost = Post.builder()
+            Post moderatorArchivedPost = Post.builder()
                     .title("Vintage Fashion Trends Making a Comeback")
                     .content(
                             "Fashion trends from the 90s are making a big comeback. Let's explore which ones are worth trying...")
@@ -142,10 +143,10 @@ public class DataInitializer {
                     .category(lifestyleCategory)
                     .tags(Set.of(lifestyleTag))
                     .build();
-            testUser1ArchivedPost = postRepository.save(testUser1ArchivedPost);
+            moderatorArchivedPost = postRepository.save(moderatorArchivedPost);
 
-            // Create posts for test user 2
-            Post testUser2DraftPost = Post.builder()
+            // Create posts for test user
+            Post testUserDraftPost = Post.builder()
                     .title("Hidden Gems in Southeast Asia")
                     .content(
                             "During my recent trip, I discovered some amazing hidden gems in Southeast Asia. Here are my favorites...")
@@ -154,9 +155,9 @@ public class DataInitializer {
                     .category(travelCategory)
                     .tags(Set.of(travelTag))
                     .build();
-            testUser2DraftPost = postRepository.save(testUser2DraftPost);
+            testUserDraftPost = postRepository.save(testUserDraftPost);
 
-            Post testUser2PublishedPost = Post.builder()
+            Post testUserPublishedPost = Post.builder()
                     .title("The Ultimate Guide to Solo Travel")
                     .content(
                             "Solo travel can be intimidating but incredibly rewarding. Here's my comprehensive guide...")
@@ -165,9 +166,9 @@ public class DataInitializer {
                     .category(travelCategory)
                     .tags(Set.of(travelTag))
                     .build();
-            testUser2PublishedPost = postRepository.save(testUser2PublishedPost);
+            testUserPublishedPost = postRepository.save(testUserPublishedPost);
 
-            Post testUser2ArchivedPost = Post.builder()
+            Post testUserArchivedPost = Post.builder()
                     .title("Traveling on a Budget: Tips and Tricks")
                     .content(
                             "You don't need to be rich to travel the world. Here are my best tips for budget travel...")
@@ -176,7 +177,7 @@ public class DataInitializer {
                     .category(travelCategory)
                     .tags(Set.of(travelTag))
                     .build();
-            testUser2ArchivedPost = postRepository.save(testUser2ArchivedPost);
+            testUserArchivedPost = postRepository.save(testUserArchivedPost);
 
             // Create comments for admin's published post
             Comment adminPostComment1 = Comment.builder()
@@ -197,56 +198,56 @@ public class DataInitializer {
                     .build();
             commentRepository.save(adminPostComment2);
 
-            // Create comments for test user 1's published post
-            Comment testUser1PostComment1 = Comment.builder()
+            // Create comments for moderator's published post
+            Comment moderatorPostComment1 = Comment.builder()
                     .content(
                             "These are some great tips! I've been struggling with work-life balance and this gives me hope.")
                     .status(CommentStatus.APPROVED)
-                    .post(testUser1PublishedPost)
+                    .post(moderatorPublishedPost)
                     .author(johnDoe)
                     .build();
-            commentRepository.save(testUser1PostComment1);
+            commentRepository.save(moderatorPostComment1);
 
-            Comment testUser1PostComment2 = Comment.builder()
+            Comment moderatorPostComment2 = Comment.builder()
                     .content("I especially liked the part about setting boundaries. Very important advice!")
                     .status(CommentStatus.PENDING)
-                    .post(testUser1PublishedPost)
+                    .post(moderatorPublishedPost)
                     .author(bobJones)
                     .build();
-            commentRepository.save(testUser1PostComment2);
+            commentRepository.save(moderatorPostComment2);
 
-            // Create comments for test user 2's published post
-            Comment testUser2PostComment1 = Comment.builder()
+            // Create comments for test user's published post
+            Comment testUserPostComment1 = Comment.builder()
                     .content(
                             "This guide is amazing! I've been wanting to try solo travel and this gives me the confidence to do it.")
                     .status(CommentStatus.APPROVED)
-                    .post(testUser2PublishedPost)
+                    .post(testUserPublishedPost)
                     .author(johnDoe)
                     .build();
-            commentRepository.save(testUser2PostComment1);
+            commentRepository.save(testUserPostComment1);
 
-            Comment testUser2PostComment2 = Comment.builder()
+            Comment testUserPostComment2 = Comment.builder()
                     .content("I've done some solo travel and these tips are spot on. Great job!")
                     .status(CommentStatus.PENDING)
-                    .post(testUser2PublishedPost)
+                    .post(testUserPublishedPost)
                     .author(aliceSmith)
                     .build();
-            commentRepository.save(testUser2PostComment2);
+            commentRepository.save(testUserPostComment2);
 
             // Create comments in different states for all posts
             createCommentsForPost(adminDraftPost, johnDoe, aliceSmith, bobJones);
             createCommentsForPost(adminPublishedPost, johnDoe, aliceSmith, bobJones);
             createCommentsForPost(adminArchivedPost, johnDoe, aliceSmith, bobJones);
-            createCommentsForPost(testUser1DraftPost, johnDoe, aliceSmith, bobJones);
-            createCommentsForPost(testUser1PublishedPost, johnDoe, aliceSmith, bobJones);
-            createCommentsForPost(testUser1ArchivedPost, johnDoe, aliceSmith, bobJones);
-            createCommentsForPost(testUser2DraftPost, johnDoe, aliceSmith, bobJones);
-            createCommentsForPost(testUser2PublishedPost, johnDoe, aliceSmith, bobJones);
-            createCommentsForPost(testUser2ArchivedPost, johnDoe, aliceSmith, bobJones);
+            createCommentsForPost(moderatorDraftPost, johnDoe, aliceSmith, bobJones);
+            createCommentsForPost(moderatorPublishedPost, johnDoe, aliceSmith, bobJones);
+            createCommentsForPost(moderatorArchivedPost, johnDoe, aliceSmith, bobJones);
+            createCommentsForPost(testUserDraftPost, johnDoe, aliceSmith, bobJones);
+            createCommentsForPost(testUserPublishedPost, johnDoe, aliceSmith, bobJones);
+            createCommentsForPost(testUserArchivedPost, johnDoe, aliceSmith, bobJones);
         };
     }
 
-    private void createCommentsForPost(Post post, User adminUser, User testUser1, User testUser2) {
+    private void createCommentsForPost(Post post, User adminUser, User moderatorUser, User testUser) {
         // Create approved comment
         Comment approvedComment = Comment.builder()
                 .content("Great insights! I learned something new from this post.")
@@ -261,7 +262,7 @@ public class DataInitializer {
                 .content("This is really helpful. I'll try to implement these ideas in my own work.")
                 .status(CommentStatus.PENDING)
                 .post(post)
-                .author(testUser1)
+                .author(moderatorUser)
                 .build();
         commentRepository.save(pendingComment);
 
@@ -270,7 +271,7 @@ public class DataInitializer {
                 .content("Check out my website for amazing deals! https://spam.com")
                 .status(CommentStatus.REJECTED)
                 .post(post)
-                .author(testUser2)
+                .author(testUser)
                 .build();
         commentRepository.save(spamComment);
 

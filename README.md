@@ -17,7 +17,7 @@ Zenith is a comprehensive blog application built with Spring Boot that provides 
 
 ## Technologies Used
 
-- **Spring Boot 3.5.7**: Core framework for building the application
+- **Spring Boot 3.5**: Core framework for building the application
 - **Spring Data JPA**: ORM for database interactions
 - **PostgreSQL**: Relational database for data persistence
 - **JWT (jjwt)**: JSON Web Token for authentication
